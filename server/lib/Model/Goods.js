@@ -92,7 +92,7 @@ exports = module.exports = {
     async basicGoods (member_id) {
         const foolrHotGoods = await getHotGoodsByFoolr();
         const goodsCategoryList = await getGoodsCategoryListByMid();
-        const onlineActivityGoods = await getOnlineActivityGoodsByAids(member_id);
+        // const onlineActivityGoods = await getOnlineActivityGoodsByAids(member_id);
         const goods_ids = foolrHotGoods.goods_ids;
         const foolrHotGoods_map = foolrHotGoods.hotGoodsByFoolrMap;
         const sql = `SELECT eg.*, g.sale_inventory, g.deliver_area, g.goods_category_id, tgc.parent_id 
@@ -112,16 +112,46 @@ exports = module.exports = {
                      ORDER BY g.goods_category_id ASC, g.sale_inventory DESC`;
         return db.curd(sql)
             .then(res => {
-                const res_map = new Map(res.map(value => [value.goods_category_id, value]));
+                let resMapArray = null;
+                let current_resArray = [];
+                let resChildMapArray = null;
+                let current_resChildArray = [];
+
+                for (let [index, item] of res.entries()) {
+
+                    if (resMapArray && item.parent_id === resMapArray[0]) {
+                        resMapArray[1].push(item);
+                    } else {
+                        resMapArray && current_resArray.push(resMapArray);
+                        resMapArray = [item.parent_id, [item]];
+                    }
+
+                    if (resChildMapArray && item.goods_category_id === resChildMapArray[0]) {
+                        resChildMapArray[1].push(item);
+                    } else {
+                        resChildMapArray && current_resChildArray.push(resChildMapArray);
+                        resChildMapArray = [item.goods_category_id, [item]];
+                    }
+
+                    if (index === res.length - 1) {
+                        resMapArray && current_resArray.push(resMapArray);
+                        resChildMapArray && current_resChildArray.push(resChildMapArray);
+                        resMapArray = resChildMapArray = null;
+                    }
+                }
+                const res_map = new Map(current_resArray);
+                const resChild_map = new Map(current_resChildArray);
+
                 for (let item of goodsCategoryList) {
                     item.hotGoods = foolrHotGoods_map.get(item.id);
+                    item.allGoods = res_map.get(item.id);
                     for (let child_item of item.child) {
-                        child_item.goodsList = res_map.get(child_item.id);
+                        child_item.goodsList = resChild_map.get(child_item.id);
                     }
                 }
                 return goodsCategoryList;
             })
-            .catch(err => err);
+            .catch(err => (console.log(err), err));
     },
     likeGoods (...params) {
 

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const redisStore = require('connect-redis')(session);
+const fileStore = require('session-file-store')(session);
 const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
@@ -29,12 +29,7 @@ app.use(session({
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 // 过期时间，过期后 cookie 中的 session id 自动删除
     },
-    store: new redisStore({
-        host: '127.0.0.1',
-        port: '6379',
-        db: 0,
-        pass: ''
-    })
+    store: new fileStore()
 }))
 app.use(function(req, res, next) {
     // res.header('Access-Control-Allow-Origin', 'http://1200.ecwhale.com'); //先允许跨域请求才能进来
