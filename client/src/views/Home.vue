@@ -42,26 +42,27 @@
         <div class="floor-goods">
             <div class="floor-goods-list main-width" v-for="goodsList in basicGoods" :key="goodsList.id" v-if="goodsList.allGoods">
                 <div class="category">
-                    <span> {{ goodsList.category_name }} </span>
-                    <p class="category-child">
-                        <router-link v-for="category in goodsList.child" :key="category.id"> {{ category.category_name }} </router-link>
+                    <span class="category-title"> {{ goodsList.category_name }} </span>
+                    <p class="category-child right">
+                        <router-link to="/"> 全部 </router-link>
+                        <router-link v-for="category in goodsList.child" :key="category.id" to="/"> {{ category.category_name }} </router-link>
                     </p>
                 </div>
 
                 <div class="goods-groups">
-                    <div v-if="goodsList.hotGoods" class="hot-goods"><img :src="goodsList.hotGoods.pc_accessory_url" width="100%" alt=""> </div>
+                    <div v-if="goodsList.hotGoods" class="hot-goods"><img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </div>
                     <div class="goods" v-for="goods in goodsList.allGoods" :key="goods.goods_id">
-                        <div class="goods-img"><router-link to="/"><img :src="goods.goods_img_url" width="100%" alt=""></router-link></div>
-                        <div class="goods-title text-ellipsis"> {{ goods.ec_goods_name }} </div>
-                        <div class="goods-price"> <span> ¥{{ goods.ec_sales_price }} </span> <button type="button" class="right btn-addcar-activity">
-                            <img src="../assets/tocart.png" width="100%" alt=""></button></div>
+                        <div class="goods-img"><router-link to="/"><img class="position-center" :src="goods.goods_img_url" alt=""></router-link></div>
+                        <div class="goods-info">
+                            <div class="goods-title text-ellipsis"> <router-link to="/"> {{ goods.ec_goods_name }} </router-link></div>
+                            <div class="goods-price"> <span class="price"> ¥{{ goods.ec_sales_price }} </span> <span class="right deliver-area"> {{ goods.deliver_area == "0" ? "保税区发货" : "日本直邮" }} </span> </div>
+                            <button type="button" class="right btn-addcar-goods"> <img src="../assets/tocart.png" alt=""></button>
+                        </div>
                     </div>
                 </div>
 
             </div>
         </div>
-        <img alt="Vue logo" src="../assets/logo.png">
-        <HelloWorld msg="Welcome to Your Vue.js App"/>
     </div>
 </template>
 
@@ -69,7 +70,6 @@
     // @ is an alias to /src
     import HeaderTop from '@c/headerTop.vue';
     import HeaderMain from '@c/headerMain.vue';
-    import HelloWorld from '@c/HelloWorld.vue';
     export default {
         name: 'home',
         data () {
@@ -82,8 +82,7 @@
         },
         components: {
             HeaderTop,
-            HeaderMain,
-            HelloWorld
+            HeaderMain
         },
         created() {
             this.$axios.get('api/getHomeData')
@@ -300,6 +299,28 @@
     }
     .floor-goods {
         background-color: #f5f5f5;
+        padding-top: 60px;
+        .floor-goods-list {
+            margin-bottom: 36px;
+        }
+        .category {
+            line-height: 40px;
+        }
+        .category-title {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .category-child a {
+            color: $minor_color;
+            &:not(:first-child) {
+                &::before {
+                    content: "/";
+                }
+            }
+            &:hover {
+                color: #3161CF;
+            }
+        }
     }
     .goods-groups {
 
@@ -312,9 +333,42 @@
             width: 262.5px;
             margin-left: 10px;
             background-color: #fff;
-            padding: 8px;
+            padding: 12px 12px 5px;
+            height: 283px;
+            margin-bottom: 10px;
             &:nth-child(1), &:nth-child(4) {
                 margin: 0;
+            }
+            .goods-info {
+                position: relative;
+                line-height: 24px;
+                padding: 5px 40px 5px 0;
+            }
+            button {
+                position: absolute;
+                right: 0;
+                top: 8px;
+                width: 40px;
+                height: 40px;
+                border: 2px solid $color;
+                border-radius: 50%;
+                padding: 3px;
+                cursor: pointer;
+            }
+            .deliver-area {
+                color: #bfbfbf;
+                font-size: 10px;
+                margin-right: 12px;
+            }
+        }
+        .goods-title a {
+            color: #333;
+        }
+        .goods-price {
+            font-size: 12px;
+            .price {
+                color: $color;
+                font-weight: bold;
             }
         }
         .goods-img {
@@ -323,8 +377,10 @@
                 width: 208px;
                 height: 208px;
                 margin: auto;
+                position: relative;
             }
             img {
+                max-width: 100%;
                 max-height: 100%;
             }
         }

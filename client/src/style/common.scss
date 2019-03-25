@@ -133,6 +133,15 @@ a:hover, button:hover {
   @extend .flex-row-center;
   @extend .flex-col-center
 }
+
+.position-center {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
 /* 超出文本省略 */
 .text-ellipsis { // 单行
   overflow: hidden;
