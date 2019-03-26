@@ -4,18 +4,18 @@
         <HeaderMain :basicGoods="basicGoods"/>
         <el-carousel indicator-position="none" :autoplay="false">
             <el-carousel-item v-for="item in 4" :key="item">
-                <img src="../assets/banner.png" width="100%" height="100%" alt="">
+                <img src="../../assets/banner.png" width="100%" height="100%" alt="">
             </el-carousel-item>
         </el-carousel>
         <div class="activity-hot">
             <div class="decorate">
-                <img class="decorate-img decorate-left-img" src="../assets/decorate-01.png" width="475" alt="decorate-01">
-                <img class="decorate-img decorate-right-img" src="../assets/decorate-02.png" width="285" alt="decorate-02">
+                <img class="decorate-img decorate-left-img" src="../../assets/decorate-01.png" width="475" alt="decorate-01">
+                <img class="decorate-img decorate-right-img" src="../../assets/decorate-02.png" width="285" alt="decorate-02">
                 <div class="decorate-side">
                     <div class="activity-list">
                         <div class="activity-info">
                             <p class="activity-title"> {{ activityList.ac_title }} </p>
-                            <img src="../assets/japan.png" width="228" height="157" alt="japan">
+                            <img src="../../assets/japan.png" width="228" height="157" alt="japan">
                             <p class="activity-time">
                                 <span>01</span>天<span>05</span>时<span>25</span>分<span>45</span>秒
                             </p>
@@ -27,7 +27,7 @@
                                         <div class="goods-img"><img :src="goods.goods_img_url" width="100%" height="auto" alt=""></div>
                                         <div class="goods-title text-ellipsis"> {{ goods.ec_goods_name }} </div>
                                         <div class="goods-price"> <span> ¥{{ goods.ag_price }} </span> <del> ¥{{ goods.ec_sales_price }} </del> <button type="button" class="right btn-addcar-activity">
-                                            <img src="../assets/tocart.png" width="100%" alt=""></button></div>
+                                            <img src="../../assets/tocart.png" width="100%" alt=""></button></div>
                                     </router-link>
                                 </el-carousel-item>
                             </el-carousel>
@@ -56,7 +56,7 @@
                         <div class="goods-info">
                             <div class="goods-title text-ellipsis"> <router-link to="/"> {{ goods.ec_goods_name }} </router-link></div>
                             <div class="goods-price"> <span class="price"> ¥{{ goods.ec_sales_price }} </span> <span class="right deliver-area"> {{ goods.deliver_area == "0" ? "保税区发货" : "日本直邮" }} </span> </div>
-                            <button type="button" class="right btn-addcar-goods"> <img src="../assets/tocart.png" alt=""></button>
+                            <button type="button" class="right btn-addcar-goods"> <img src="../../assets/tocart.png" alt=""></button>
                         </div>
                     </div>
                 </div>
@@ -70,12 +70,14 @@
     // @ is an alias to /src
     import HeaderTop from '@c/headerTop.vue';
     import HeaderMain from '@c/headerMain.vue';
+    import { onGetHomeData } from "../../service/getData";
+
     export default {
         name: 'home',
         data () {
             return {
                 basicGoods: null,
-                activityList: { goodsList: null },
+                activityList: { goodsList: [] },
                 hotList: null,
 
             }
@@ -85,17 +87,11 @@
             HeaderMain
         },
         created() {
-            this.$axios.get('api/getHomeData')
-                .then(res => {
-                    console.log(res.data);
-                    if (res.data.success) {
-                        this.basicGoods = res.data.result.basicGoodsList;
-                        this.activityList = res.data.result.activeGoodsList;
-                        this.hotList = res.data.result.hotGoodsList;
-                    } else {
-
-                    }
-                });
+            onGetHomeData().then(res => {
+                this.basicGoods = res.result.basicGoodsList;
+                this.activityList = res.result.activeGoodsList;
+                this.hotList = res.result.hotGoodsList;
+            });
         },
         computed: {
             activityLoop () {
@@ -161,7 +157,7 @@
         position: relative;
         width: 1420px;
         margin: 0 auto;
-        background: url('../assets/decorate-bg.png') no-repeat center;
+        background: url('../../assets/decorate-bg.png') no-repeat center;
         background-size: 1360px auto;
         background-position-x: 60px;
         padding: 44px 0 8px;

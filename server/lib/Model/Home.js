@@ -6,7 +6,7 @@ exports = module.exports = {
     * @return result 查询结果
     *
     * */
-    getShopBaseinfoModel (...params) {
+    getShopInfoModel (...params) {
         const sql = "SELECT * FROM ec_shop WHERE domain=?";
         return db.curd(sql, params);
     },

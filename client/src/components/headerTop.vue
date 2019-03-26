@@ -2,8 +2,8 @@
     <div id="headerTop">
         <div class="main-width flex-row-between">
             <div>
-                <span>您好 {{ username }}，欢迎来到 {{ shop_name }}</span>
-                <template v-if="username">
+                <span>您好 {{ userInfo.name }}，欢迎来到 {{ shopInfo.aftermarket_receive }}</span>
+                <template v-if="login">
                     <button type="button" class="btn-logout hover-cursor" @click="logout"> 【退出】 </button>
                 </template>
                 <template v-else>
@@ -19,20 +19,34 @@
 </template>
 
 <script>
-export default {
-    name: 'headerTop',
-    data() {
-        return {
-            username: '',
-            shop_name: '壹壹仟壹仟贰'
+    import { mapState, mapActions } from 'vuex';
+    export default {
+        name: 'headerTop',
+        data() {
+            return {
+                username: '',
+                shop_name: '壹壹仟壹仟贰'
+            }
+        },
+        created () {
+            this.getUserInfo();
+        },
+        computed: {
+            ...mapState([
+                'shopInfo',
+                'userInfo',
+                'login'
+            ])
+        },
+        methods: {
+            ...mapActions([
+                'getUserInfo'
+            ]),
+            logout () {
+                console.log('logout');
+            }
         }
-    },
-    methods: {
-        logout () {
-            console.log('logout');
-        }
-    }
-};
+    };
 </script>
 
 <style scoped lang="scss">

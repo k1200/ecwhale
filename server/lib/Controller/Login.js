@@ -1,13 +1,13 @@
-const { getShopBaseinfoModel, loginModel } = require('../Model/Login');
+const { getShopInfoModel, loginModel } = require('../Model/Login');
 const { jsonReturn } = require('./utils');
 const crypto = require('crypto');
 exports = module.exports = {
-    async getShopBaseinfo (req, res) {
-        const result = await getShopBaseinfoModel(req.headers['x-forwarded-host']);
+    async getShopInfoController (req, res) {
+        const result = await getShopInfoModel(req.headers['x-forwarded-host']);
         req.session.member_id = result[0].member_id;
-        res.json(jsonReturn({shop_name: result[0].shop_name}));
+        res.json(jsonReturn(result[0]));
     },
-    async login (req, res, cacheData = null) {
+    async loginController (req, res, cacheData = null) {
         const data = cacheData || req.body;
         let md5 = crypto.createHash('md5');
         md5.update(data.password);

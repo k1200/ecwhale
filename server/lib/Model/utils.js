@@ -82,5 +82,18 @@ exports = module.exports = {
                 .then(res => res.map(value => [value.goods_id, {...value}]))
                 .catch(err => err);
         }
+    },
+    async getUserInfoModel (member_id, user_id) {
+        const sql = `SELECT id AS user_id, name, open_mall_status, audit_status, phone, sex, is_open_store, data_status 
+                     FROM ec_member 
+                     WHERE id = ${user_id} 
+                     AND recommend_id= ${member_id}`;
+        return db.curd(sql, params)
+            .then(res => {
+                res[0].is_open_store = res[0].is_open_store.data;
+                res[0].data_status = res[0].data_status.data;
+                return res;
+            })
+            .catch(err => err);
     }
 };

@@ -20,7 +20,7 @@
                                   autocomplete="off"
                                   :placeholder="rule_form.username.message"
                                   clearable>
-                            <img slot="prefix" style="margin-top: 8px" src="../assets/user.png">
+                            <img slot="prefix" style="margin-top: 8px" src="../../assets/user.png">
                         </el-input>
                     </el-form-item>
                     <el-form-item class="login-input" label="" prop="password">
@@ -30,7 +30,7 @@
                                   autocomplete="off"
                                   :placeholder="rule_form.password.message"
                                   clearable>
-                            <img slot="prefix" style="margin-top: 10px" src="../assets/password.png">
+                            <img slot="prefix" style="margin-top: 10px" src="../../assets/password.png">
                         </el-input>
                     </el-form-item>
                     <!--<el-form-item class="login-input">-->
@@ -85,7 +85,9 @@
 </template>
 
 <script>
-    import verify from '../components/verify.vue';
+    import verify from '../../components/verify.vue';
+    import { mapMutations } from 'vuex'
+    import { onGetShopInfo, onLogin } from "../../service/getData";
 
     export default {
         data() {
@@ -130,22 +132,24 @@
             };
         },
         created() {
-            this.$axios.get('api/getShop')
-                .then(res => {
-                    console.log(res.data);
-                    if (res.data.success) {
-                        this.dataList.name = res.data.result.shop_name
-                    } else {
+            onGetShopInfo().then(res => {
+                if (res.success) {
+                    this.dataList.name = res.result.shop_name;
+                    this.RECORD_SHOPINFO(res.result);
+                } else {
 
-                    }
-
-                });
+                }
+            });
         },
         components: {
             verify
         },
         computed: {},
         methods: {
+            ...mapMutations([
+                'RECORD_USERINFO',
+                'RECORD_SHOPINFO'
+            ]),
             verifySuccess(options) {
                 if (options) {
                     this.login_form.aritRes = '1200';
@@ -174,11 +178,14 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        console.log('confirm');
-                        this.$axios.post('api/login', this.login_form).then(res => {
-                                console.log(res.data);
-                                this.$router.replace('home');
-                            });
+                        onLogin(this.login_form).then(res => {
+                            if (res.success) {
+                                this.RECORD_USERINFO(res.result);
+                                this.$router.go(-1);
+                            } else {
+                                console.log(res);
+                            }
+                        });
                     } else {
                         console.log('error submit!!')
                         return false;
@@ -207,7 +214,7 @@
     }
 </style>
 <style lang="scss" scoped>
-    @import "../style/variate.scss";
+    @import "../../style/variate";
 
     header {
         height: 88px;
@@ -240,7 +247,7 @@
 
     article {
         height: 650px;
-        background: url("../assets/login.jpg") center;
+        background: url("../../assets/login.jpg") center;
         min-width: $width
     }
 

@@ -6,7 +6,7 @@ exports = module.exports = {
     * @return result 查询结果
     *
     * */
-    getShopBaseinfoModel (...params) {
+    getShopInfoModel (...params) {
         const sql = "SELECT * FROM ec_shop WHERE domain=?";
         return db.curd(sql, params);
     },
@@ -19,7 +19,7 @@ exports = module.exports = {
     *
     * */
     loginModel (...params) {
-        const sql = "SELECT name, open_mall_status, audit_status, phone, sex, is_open_store, data_status FROM ec_member WHERE name=? and recommend_id=? and password=?";
+        const sql = "SELECT id AS user_id, name, open_mall_status, audit_status, phone, sex, is_open_store, data_status FROM ec_member WHERE name=? and recommend_id=? and password=?";
         return db.curd(sql, params)
             .then(res => {
                 res[0].is_open_store = res[0].is_open_store.data;

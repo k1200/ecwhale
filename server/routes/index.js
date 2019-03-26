@@ -32,10 +32,12 @@ const isLogin = (req, res, next) => {
     }
 };
 
-const login = require('../lib/Routes/Login');
-const home = require('../lib/Routes/Home');
+const RouterLogin = require('../lib/Routes/Login');
+const RouterHome = require('../lib/Routes/Home');
+const RouterUtils = require('../lib/Routes/utils');
 module.exports = app => {
-    app.use('/', login);
-    app.use('/', home);
+    app.use('/', RouterLogin);
+    app.use('/', RouterHome);
     app.use(isLogin);
+    app.use('/', RouterUtils);
 };

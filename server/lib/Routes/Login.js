@@ -1,9 +1,9 @@
 const express = require('express');
-let { getShopBaseinfo, login } = require('../Controller/Login');
+let { getShopInfoController, loginController } = require('../Controller/Login');
 const router = express.Router();
 
 /* GET login page. */
 
-router.get('/getShop', (req, res) => getShopBaseinfo(req, res));
-router.post('/login', (req, res) => login(req, res));
+router.get('/getShopInfo', (req, res) => getShopInfoController(req, res));
+router.post('/login', (req, res) => loginController(req, res));
 module.exports = router;
