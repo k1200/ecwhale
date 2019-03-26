@@ -15,11 +15,7 @@ export default {
         state.shopInfo = info;
     },
     [GET_USERINFO] (state, info) {
-        if (info.success) {
-            state.userInfo = {...info};
-            state.login = true;
-        } else {
-            state.userInfo = null;
-        }
+        state.userInfo = info;
+        state.login = true;
     }
 };

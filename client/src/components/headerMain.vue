@@ -1,7 +1,7 @@
 <template>
     <div id="headerMain">
         <div class="main-width flex-row-between search-side">
-            <div class="shop-name"> {{ shopName }}</div>
+            <div class="shop-name"> {{ shopInfo.shop_name }}</div>
             <div class="search-options">
                 <el-input placeholder="搜索您需要的商品 品牌" v-model="keywords" class="input-with-btn">
                     <el-button slot="append" icon="el-icon-search" class="btn-search"></el-button>
@@ -30,14 +30,19 @@
 </template>
 
 <script>
+    import { mapState } from 'vuex'
     export default {
         name: 'headerMain',
         data() {
             return {
-                shopName: '壹壹仟壹仟贰',
                 carCount: 0,
                 keywords: ''
             }
+        },
+        computed: {
+            ...mapState([
+                'shopInfo'
+            ])
         },
         methods: {},
         props: ['basicGoods']

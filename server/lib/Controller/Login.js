@@ -1,11 +1,10 @@
 const { getShopInfoModel, loginModel } = require('../Model/Login');
-const { jsonReturn } = require('./utils');
 const crypto = require('crypto');
 exports = module.exports = {
     async getShopInfoController (req, res) {
         const result = await getShopInfoModel(req.headers['x-forwarded-host']);
         req.session.member_id = result[0].member_id;
-        res.json(jsonReturn(result[0]));
+        res.json(result[0]);
     },
     async loginController (req, res, cacheData = null) {
         const data = cacheData || req.body;
@@ -17,7 +16,7 @@ exports = module.exports = {
             if (cacheData) {
                 return false;
             } else {
-                return res.json(jsonReturn(null, '用户名或密码错误，请重新输入！', false));
+                return res.json({message: '用户名或密码错误，请重新输入！', status: 0, type: 'PASSWORD_ERROR'});
             }
         }
 
@@ -38,7 +37,7 @@ exports = module.exports = {
         if (cacheData) {
             return true;
         } else {
-            return res.json(jsonReturn(result[0], '登录成功！'));
+            return res.json(result[0]);
         }
     }
 };

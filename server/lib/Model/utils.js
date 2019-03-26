@@ -88,11 +88,11 @@ exports = module.exports = {
                      FROM ec_member 
                      WHERE id = ${user_id} 
                      AND recommend_id= ${member_id}`;
-        return db.curd(sql, params)
+        return db.curd(sql)
             .then(res => {
                 res[0].is_open_store = res[0].is_open_store.data;
                 res[0].data_status = res[0].data_status.data;
-                return res;
+                return res[0];
             })
             .catch(err => err);
     }

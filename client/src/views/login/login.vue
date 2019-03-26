@@ -133,12 +133,8 @@
         },
         created() {
             onGetShopInfo().then(res => {
-                if (res.success) {
-                    this.dataList.name = res.result.shop_name;
-                    this.RECORD_SHOPINFO(res.result);
-                } else {
-
-                }
+                this.dataList.name = res.shop_name;
+                this.RECORD_SHOPINFO(res);
             });
         },
         components: {
@@ -179,12 +175,8 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         onLogin(this.login_form).then(res => {
-                            if (res.success) {
-                                this.RECORD_USERINFO(res.result);
-                                this.$router.go(-1);
-                            } else {
-                                console.log(res);
-                            }
+                            this.RECORD_USERINFO(res);
+                            this.$router.go(-1);
                         });
                     } else {
                         console.log('error submit!!')

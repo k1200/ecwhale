@@ -88,9 +88,9 @@
         },
         created() {
             onGetHomeData().then(res => {
-                this.basicGoods = res.result.basicGoodsList;
-                this.activityList = res.result.activeGoodsList;
-                this.hotList = res.result.hotGoodsList;
+                this.basicGoods = res.basicGoodsList;
+                this.activityList = res.activeGoodsList;
+                this.hotList = res.hotGoodsList;
             });
         },
         computed: {

@@ -30,6 +30,7 @@
         },
         created () {
             this.getUserInfo();
+            this.getShopInfo();
         },
         computed: {
             ...mapState([
@@ -40,7 +41,8 @@
         },
         methods: {
             ...mapActions([
-                'getUserInfo'
+                'getUserInfo',
+                'getShopInfo'
             ]),
             logout () {
                 console.log('logout');

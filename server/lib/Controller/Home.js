@@ -1,4 +1,3 @@
-const { jsonReturn, jsonError } = require('./utils');
 const { activeGoods, hotGoods, basicGoods } = require('../Model/Goods');
 
 exports = module.exports = {
@@ -9,7 +8,7 @@ exports = module.exports = {
         if (req.session.auth_token) {
             console.log(req.session.auth_token);
         }
-        res.status(200).json(jsonReturn({activeGoodsList, hotGoodsList, basicGoodsList}))
+        res.status(200).json({activeGoodsList, hotGoodsList, basicGoodsList})
     }
 };
 

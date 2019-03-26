@@ -32,7 +32,6 @@ axios.interceptors.request.use(function (config) {
 axios.interceptors.response.use(
     response => {
         loadingInstance.close();
-        console.log(response);
         if (response.status === 200) {
             let data = response.data;
             if (data) {

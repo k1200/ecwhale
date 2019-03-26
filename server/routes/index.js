@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { login: onLogin } = require('../lib/Controller/Login');
+const { loginController } = require('../lib/Controller/Login');
 const isLogin = (req, res, next) => {
     let { auto_token } = req.session;
     if (!auto_token) {
@@ -15,7 +15,7 @@ const isLogin = (req, res, next) => {
             const decipher = crypto.createDecipher('aes-256-cfb', 'aaron');
             let decrypted = decipher.update(cookieUser, 'hex', 'utf8');
             decrypted += decipher.final('utf8');
-            onLogin(req, res, JSON.parse(decrypted)).then(result => {
+            loginController(req, res, JSON.parse(decrypted)).then(result => {
                 if (result) {
                     next()
                 } else {

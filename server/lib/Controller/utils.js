@@ -1,8 +1,7 @@
+const { getUserInfoModel } = require('../Model/utils');
 exports = module.exports = {
-    jsonReturn (result, msg = '', success = true) {
-        return {result, msg, success};
-    },
-    jsonError (result) {
-        return {result, msg: '系统错误，请联系网管！', success: false};
+    async getUserInfoController (req, res) {
+        const userInfo = await getUserInfoModel(req.session.member_id, req.params.user_id);
+        res.status(200).json(userInfo);
     }
 };
