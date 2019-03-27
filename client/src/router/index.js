@@ -7,9 +7,16 @@ Vue.use(Router);
 const login = () => import(/* webpackChunkName: "login" */ '@views/login/login.vue');
 const home = () => import(/* webpackChunkName: "home" */ '@views/home/home.vue');
 
+const header = () => import(/* webpackChunkName: "header" */ '@c/headerTop.vue');
+const footer = () => import(/* webpackChunkName: "footer" */ '@c/footerMin.vue')
+
 const routes = [{
     path: '/',
-    component: App, //顶层路由，对应index.html
+    components: {
+        default: App,
+        header: header,
+        footer: footer
+    }, //顶层路由，对应index.html
     children: [ //二级路由。对应App.vue
         //地址为空时跳转home页面
         {

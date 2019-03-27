@@ -14,9 +14,19 @@ export const onLogin = params => axios('login', params, 'post');
 /**
  * 获取用户信息
  * */
-export const onGetUser = () =>axios(`getUserInfo/${getStore('user_id')}`);
+export const onGetUser = id =>axios(`getUserInfo/${id}`);
 
 /**
  * 获取首页数据
  * */
 export const onGetHomeData = () => axios('getHomeData');
+
+/**
+ * 退出登录
+ * */
+export const onLogout = () => axios('logout');
+
+/**
+ * 获取购物车列表
+ * */
+export const onGetCartList = () => axios(`getCartList/${getStore('user_id')}`);

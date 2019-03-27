@@ -78,9 +78,9 @@
                 </el-form>
             </div>
         </article>
-        <footer class="footer main-width">
-            {{ dataList.aq }}
-        </footer>
+        <!--<footer class="footer main-width">-->
+            <!--{{ dataList.aq }}-->
+        <!--</footer>-->
     </div>
 </template>
 
@@ -207,7 +207,9 @@
 </style>
 <style lang="scss" scoped>
     @import "../../style/variate";
-
+    #login {
+        margin-bottom: 80px;
+    }
     header {
         height: 88px;
         line-height: 88px;
@@ -281,22 +283,5 @@
         line-height: 40px;
         color: #fff;
         cursor: pointer;
-    }
-
-    footer {
-        text-align: center;
-        color: $minor_color;
-        margin-top: 80px;
-        padding-top: 18px;
-        position: relative;
-        &::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 1px;
-            background-color: #e5e5e5
-        }
     }
 </style>

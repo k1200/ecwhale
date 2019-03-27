@@ -19,10 +19,9 @@ exports = module.exports = {
     *
     * */
     loginModel (...params) {
-        const sql = "SELECT id AS user_id, name, open_mall_status, audit_status, phone, sex, is_open_store, data_status FROM ec_member WHERE name=? and recommend_id=? and password=?";
+        const sql = "SELECT id AS user_id, name, audit_status, phone, sex, data_status FROM ec_member WHERE name=? and recommend_id=? and password=?";
         return db.curd(sql, params)
             .then(res => {
-                res[0].is_open_store = res[0].is_open_store.data;
                 res[0].data_status = res[0].data_status.data;
                 return res;
             })

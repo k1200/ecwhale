@@ -1,6 +1,5 @@
 <template>
     <div class="home">
-        <HeaderTop/>
         <HeaderMain :basicGoods="basicGoods"/>
         <el-carousel indicator-position="none" :autoplay="false">
             <el-carousel-item v-for="item in 4" :key="item">
@@ -62,14 +61,34 @@
                 </div>
 
             </div>
+
+            <div class="floor-goods-list main-width" >
+                <div class="category">
+                    <span class="category-title"> 猜你喜欢 </span>
+                    <p class="category-child right"> <router-link to="/"> 换一换 </router-link> </p>
+                </div>
+
+                <div class="goods-groups pageView">
+                    <div class="goods" v-for="goods in likeGoodsList" :key="goods.goods_id">
+                        <div class="goods-img"><router-link to="/"><img class="position-center" :src="goods.goods_img_url" alt=""></router-link></div>
+                        <div class="goods-info">
+                            <div class="goods-title text-ellipsis"> <router-link to="/"> {{ goods.ec_goods_name }} </router-link></div>
+                            <div class="goods-price"> <span class="price"> ¥{{ goods.ec_sales_price }} </span> <span class="right deliver-area"> {{ goods.deliver_area == "0" ? "保税区发货" : "日本直邮" }} </span> </div>
+                            <button type="button" class="right btn-addcar-goods"> <img src="../../assets/tocart.png" alt=""></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
+        <FooterMain/>
     </div>
 </template>
 
 <script>
     // @ is an alias to /src
-    import HeaderTop from '@c/headerTop.vue';
     import HeaderMain from '@c/headerMain.vue';
+    import FooterMain from '@c/footer.vue';
     import { onGetHomeData } from "../../service/getData";
 
     export default {
@@ -79,18 +98,19 @@
                 basicGoods: null,
                 activityList: { goodsList: [] },
                 hotList: null,
-
+                likeGoodsList: null
             }
         },
         components: {
-            HeaderTop,
-            HeaderMain
+            HeaderMain,
+            FooterMain
         },
         created() {
             onGetHomeData().then(res => {
                 this.basicGoods = res.basicGoodsList;
                 this.activityList = res.activeGoodsList;
                 this.hotList = res.hotGoodsList;
+                this.likeGoodsList = res.likeGoodsList;
             });
         },
         computed: {
@@ -296,7 +316,7 @@
     .floor-goods {
         background-color: #f5f5f5;
         padding-top: 60px;
-        .floor-goods-list {
+        .floor-goods-list:not(:last-child) {
             margin-bottom: 36px;
         }
         .category {
@@ -319,7 +339,6 @@
         }
     }
     .goods-groups {
-
         display: flex;
         flex-wrap: wrap;
         .hot-goods {
@@ -378,6 +397,17 @@
             img {
                 max-width: 100%;
                 max-height: 100%;
+            }
+        }
+    }
+    .pageView {
+        .goods {
+            margin-left: 10px;
+            &:nth-child(4n + 1) {
+                margin: 0;
+            }
+            &:nth-child(4) {
+                margin-left: 10px;
             }
         }
     }

@@ -1,3 +1,4 @@
+const { PASSWORD_ERROR } = require("../utils");
 const { getShopInfoModel, loginModel } = require('../Model/Login');
 const crypto = require('crypto');
 exports = module.exports = {
@@ -16,11 +17,11 @@ exports = module.exports = {
             if (cacheData) {
                 return false;
             } else {
-                return res.json({message: '用户名或密码错误，请重新输入！', status: 0, type: 'PASSWORD_ERROR'});
+                return res.json({message: '用户名或密码错误，请重新输入！', status: PASSWORD_ERROR, type: 'PASSWORD_ERROR'});
             }
         }
 
-        req.session.auth_token = `${req.session.member_id}_${result[0]}`;
+        req.session.auth_token = `${req.session.member_id}_${result[0].id}`;
 
         // createCipher函数接收两个参数
         // 第一个参数为 加密方式

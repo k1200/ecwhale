@@ -1,15 +1,17 @@
 <template>
-  <div id="app" class="min-width">
-    <router-view/>
-  </div>
+    <div id="app" class="min-width">
+        <router-view name="header"/>
+        <router-view name="default"/>
+        <router-view name="footer"/>
+    </div>
 </template>
 
 <script>
-export default {
-  name: 'app'
-};
+    export default {
+        name: 'app'
+    };
 </script>
 
 <style lang="scss">
-  @import './style/common.scss';
+    @import './style/common.scss';
 </style>

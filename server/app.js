@@ -24,7 +24,7 @@ app.use(cookieParser('ecwhale'));//express-session插件需要到cookie-parser
 app.use(session({
     name: 'ecwhale', // 设置 cookie 中保存 session id 的字段名称
     secret: 'ecwhale', // 通过设置 secret 来计算 hash 值并放在 cookie 中，使产生的 signedCookie 防篡改
-    resave: true, // 强制更新 session
+    resave: false, // 强制更新 session
     saveUninitialized: false, // 设置为 false，强制创建一个 session，即使用户未登录
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 // 过期时间，过期后 cookie 中的 session id 自动删除

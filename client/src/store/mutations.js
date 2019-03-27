@@ -4,7 +4,7 @@ import {
     RECORD_SHOPINFO
 } from './mutation-type.js';
 
-import {setStore, getStore} from '../config/utils';
+import {setStore, getStore, removeStore} from '../config/utils';
 export default {
     [RECORD_USERINFO] (state, info) {
         state.userInfo = info;
@@ -15,7 +15,14 @@ export default {
         state.shopInfo = info;
     },
     [GET_USERINFO] (state, info) {
-        state.userInfo = info;
-        state.login = true;
+        if (info) {
+            state.userInfo = info;
+            state.login = true;
+        } else {
+            state.userInfo = {};
+            state.login = false;
+            removeStore('user_id');
+        }
+
     }
 };

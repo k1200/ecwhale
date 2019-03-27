@@ -30,6 +30,7 @@
 </template>
 
 <script>
+    import { onGetCartList } from '../service/getData';
     import { mapState } from 'vuex'
     export default {
         name: 'headerMain',
@@ -38,6 +39,9 @@
                 carCount: 0,
                 keywords: ''
             }
+        },
+        created () {
+            onGetCartList().then(res => this.carCount = res.length);
         },
         computed: {
             ...mapState([

@@ -84,16 +84,30 @@ exports = module.exports = {
         }
     },
     async getUserInfoModel (member_id, user_id) {
-        const sql = `SELECT id AS user_id, name, open_mall_status, audit_status, phone, sex, is_open_store, data_status 
+        const sql = `SELECT id AS user_id, name audit_status, phone, sex data_status 
                      FROM ec_member 
                      WHERE id = ${user_id} 
                      AND recommend_id= ${member_id}`;
         return db.curd(sql)
             .then(res => {
-                res[0].is_open_store = res[0].is_open_store.data;
+                // res[0].is_open_store = res[0].is_open_store.data;
                 res[0].data_status = res[0].data_status.data;
                 return res[0];
             })
+            .catch(err => err);
+    },
+    async getCartCountModel (member_id, user_id) {
+        const sql = `SELECT ec_goods.*, t_goods_cart.id AS cid, t_goods_cart.countnum 
+                     FROM t_goods_cart
+                     LEFT JOIN ec_goods
+                     ON  t_goods_cart.goods_id = ec_goods.goods_id
+                     WHERE t_goods_cart.ec_member_id = ${user_id} 
+                     AND t_goods_cart.data_status = 1 
+                     AND ec_goods.member_id = ${member_id}
+                     AND ec_goods.goods_status = 1 
+                     AND ec_goods.data_status = 1`;
+        return db.curd(sql)
+            .then(res => res)
             .catch(err => err);
     }
 };

@@ -1,5 +1,5 @@
 <template>
-    <div id="headerTop">
+    <div id="headerTop" v-if="visible">
         <div class="main-width flex-row-between">
             <div>
                 <span>您好 {{ userInfo.name }}，欢迎来到 {{ shopInfo.aftermarket_receive }}</span>
@@ -12,23 +12,24 @@
                 </template>
             </div>
             <div class="header-left">
-                <span> 首页 </span> <span> 购物车 </span> <span> 个人中心 </span> <span> 关于我们 </span>
+                <router-link to="home" class="header-nav"> 首页 </router-link> <span class="header-nav"> 购物车 </span> <span class="header-nav"> 个人中心 </span> <span class="header-nav"> 关于我们 </span>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import { mapState, mapActions } from 'vuex';
+    import { onLogout } from '../service/getData';
+    import { mapState, mapActions, mapMutations } from 'vuex';
     export default {
         name: 'headerTop',
-        data() {
-            return {
-                username: '',
-                shop_name: '壹壹仟壹仟贰'
-            }
+        data () {
+          return {
+              visible: true
+          }
         },
         created () {
+            this.visible = !(this.$route.path === '/login');
             this.getUserInfo();
             this.getShopInfo();
         },
@@ -44,8 +45,18 @@
                 'getUserInfo',
                 'getShopInfo'
             ]),
+            ...mapMutations([
+               'GET_USERINFO'
+            ]),
             logout () {
                 console.log('logout');
+                onLogout().then(() => this.GET_USERINFO())
+            }
+        },
+        watch: {
+            '$route' (to, from) {
+                // 对路由变化作出响应...
+                this.visible = !(to.path === '/login');
             }
         }
     };
@@ -69,10 +80,10 @@
         margin: 0 12px
     }
     .header-left {
-        span {
+        .header-nav {
             @extend .hover-cursor
         }
-        span:not(:last-child) {
+        .header-nav:not(:last-child) {
             position: relative;
             margin-right: 10px;
             &::after {

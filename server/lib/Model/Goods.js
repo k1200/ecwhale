@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { promiseAll } = require('../utils');
 const { getGoodsCategoryListByMid, getOnlineActivityGoodsByAids } = require('./utils');
 
 const TYPE_HOT = 1; // 爆款
@@ -90,9 +91,8 @@ exports = module.exports = {
     *
     * */
     async basicGoods (member_id) {
-        const foolrHotGoods = await getHotGoodsByFoolr();
-        const goodsCategoryList = await getGoodsCategoryListByMid();
         // const onlineActivityGoods = await getOnlineActivityGoodsByAids(member_id);
+        const [foolrHotGoods, goodsCategoryList] = await promiseAll([getHotGoodsByFoolr(), getGoodsCategoryListByMid()]);
         const goods_ids = foolrHotGoods.goods_ids;
         const foolrHotGoods_map = foolrHotGoods.hotGoodsByFoolrMap;
         const sql = `SELECT eg.*, g.sale_inventory, g.deliver_area, g.goods_category_id, tgc.parent_id 
@@ -153,7 +153,24 @@ exports = module.exports = {
             })
             .catch(err => (console.log(err), err));
     },
-    likeGoods (...params) {
-
+    likeGoods (member_id) {
+        const sql = `SELECT eg.*, g.sale_inventory, g.deliver_area, g.goods_category_id, tgc.parent_id 
+                     FROM ec_goods eg 
+                     LEFT JOIN t_goods g 
+                     ON eg.goods_id = g.id 
+                     LEFT JOIN t_goods_category tgc 
+                     ON g.goods_category_id = tgc.id 
+                     WHERE eg.member_id = ${member_id} 
+                     AND g.goods_status = 1 
+                     AND g.data_status = 1 
+                     AND eg.goods_status = 1 
+                     AND eg.data_status = 1 
+                     AND tgc.LEVEL = 1 
+                     AND tgc.data_status = 1 
+                     ORDER BY g.goods_salenum DESC 
+                     LIMIT 8`;
+        return db.curd(sql)
+            .then(res => res)
+            .catch(error => error);
     }
 };
