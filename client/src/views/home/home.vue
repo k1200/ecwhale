@@ -3,7 +3,7 @@
         <HeaderMain :basicGoods="basicGoods"/>
         <el-carousel indicator-position="none" :autoplay="false">
             <el-carousel-item v-for="item in 4" :key="item">
-                <img src="../../assets/banner.png" width="100%" height="100%" alt="">
+                <img src="../../assets/banner.png" width="100%" height="auto"alt="">
             </el-carousel-item>
         </el-carousel>
         <div class="activity-hot">
@@ -16,14 +16,17 @@
                             <p class="activity-title"> {{ activityList.ac_title }} </p>
                             <img src="../../assets/japan.png" width="228" height="157" alt="japan">
                             <p class="activity-time">
-                                <span>01</span>天<span>05</span>时<span>25</span>分<span>45</span>秒
+                                <span>{{ activityTime.d }}</span>天<span>{{ activityTime.h }}</span>时<span>{{ activityTime.min }}</span>分<span>{{ activityTime.s }}</span>秒
                             </p>
                         </div>
                         <div class="activity-goods">
                             <el-carousel class="activity-goods-carousel" indicator-position="outside" arrow="always" :autoplay="false">
                                 <el-carousel-item class="goods-side" v-for="index in activityLoop">
                                     <router-link to="/" class="goods" v-for="goods in activityList.goodsList.slice(loopStart(index), loopEnd(index))" :key="goods.goods_id">
-                                        <div class="goods-img"><img :src="goods.goods_img_url" width="100%" height="auto" alt=""></div>
+                                        <div class="goods-img">
+                                            <img v-if="+goods.sale_inventory === 0" class="position-center stockup" src="../../assets/stockup.png" alt="已售罄">
+                                            <img :src="goods.goods_img_url" width="100%" height="auto" alt="">
+                                        </div>
                                         <div class="goods-title text-ellipsis"> {{ goods.ec_goods_name }} </div>
                                         <div class="goods-price"> <span> ¥{{ goods.ag_price }} </span> <del> ¥{{ goods.ec_sales_price }} </del> <button type="button" class="right btn-addcar-activity">
                                             <img src="../../assets/tocart.png" width="100%" alt=""></button></div>
@@ -51,7 +54,7 @@
                 <div class="goods-groups">
                     <div v-if="goodsList.hotGoods" class="hot-goods"><img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </div>
                     <div class="goods" v-for="goods in goodsList.allGoods" :key="goods.goods_id">
-                        <div class="goods-img"><router-link to="/"><img class="position-center" :src="goods.goods_img_url" alt=""></router-link></div>
+                        <div class="goods-img"><router-link to="/"><img v-if="+goods.sale_inventory === 0" class="position-center stockup" src="../../assets/stockup.png" alt="已售罄"><img class="position-center" :src="goods.goods_img_url" alt=""></router-link></div>
                         <div class="goods-info">
                             <div class="goods-title text-ellipsis"> <router-link to="/"> {{ goods.ec_goods_name }} </router-link></div>
                             <div class="goods-price"> <span class="price"> ¥{{ goods.ec_sales_price }} </span> <span class="right deliver-area"> {{ goods.deliver_area == "0" ? "保税区发货" : "日本直邮" }} </span> </div>
@@ -90,6 +93,7 @@
     import HeaderMain from '@c/headerMain.vue';
     import FooterMain from '@c/footer.vue';
     import { onGetHomeData } from "../../service/getData";
+    import { getIntervalTime, timeoutPromise } from "../../config/utils";
 
     export default {
         name: 'home',
@@ -98,7 +102,8 @@
                 basicGoods: null,
                 activityList: { goodsList: [] },
                 hotList: null,
-                likeGoodsList: null
+                likeGoodsList: null,
+                activityTime: {}
             }
         },
         components: {
@@ -106,12 +111,15 @@
             FooterMain
         },
         created() {
-            onGetHomeData().then(res => {
-                this.basicGoods = res.basicGoodsList;
-                this.activityList = res.activeGoodsList;
-                this.hotList = res.hotGoodsList;
-                this.likeGoodsList = res.likeGoodsList;
-            });
+            // onGetHomeData().then(res => {
+            //     this.basicGoods = res.basicGoodsList;
+            //     this.activityList = res.activeGoodsList;
+            //     this.hotList = res.hotGoodsList;
+            //     this.likeGoodsList = res.likeGoodsList;
+            //     console.log(getIntervalTime(this.activityList.ac_end_time).getTime);
+            // });
+            this.getData();
+
         },
         computed: {
             activityLoop () {
@@ -128,7 +136,26 @@
             },
             loopEnd (index) {
                 return +index * 4;
+            },
+            async getData () {
+                await onGetHomeData().then(res => {
+                    this.basicGoods = res.basicGoodsList;
+                    this.activityList = res.activeGoodsList;
+                    this.hotList = res.hotGoodsList;
+                    this.likeGoodsList = res.likeGoodsList;
+                });
+                this.activityTime = getIntervalTime(this.activityList.ac_end_time);
+                (function f (self) {
+                    if (self.activityTime.intervalTime > 1000) {
+                        f();
+                    }
+                    timeoutPromise(1000).then(() => {
+                        self.activityTime = getIntervalTime(self.activityTime.intervalTime);
+                        self.activityTime.intervalTime--
+                    })
+                }(this));
             }
+
         }
     }
 </script>
@@ -263,6 +290,9 @@
                     max-width: 100%;
                     max-height: 100%;
                 }
+                .stockup {
+                    z-index: 3;
+                }
             }
             .goods-title {
                 font-weight: bold;
@@ -374,6 +404,9 @@
                 color: #bfbfbf;
                 font-size: 10px;
                 margin-right: 12px;
+            }
+            .stockup {
+                z-index: 3;
             }
         }
         .goods-title a {

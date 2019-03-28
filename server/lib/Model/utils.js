@@ -84,7 +84,7 @@ exports = module.exports = {
         }
     },
     async getUserInfoModel (member_id, user_id) {
-        const sql = `SELECT id AS user_id, name audit_status, phone, sex data_status 
+        const sql = `SELECT id AS user_id, name, audit_status, phone, sex data_status 
                      FROM ec_member 
                      WHERE id = ${user_id} 
                      AND recommend_id= ${member_id}`;

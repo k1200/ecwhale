@@ -32,9 +32,9 @@ app.use(session({
     store: new fileStore()
 }))
 app.use(function(req, res, next) {
-    // res.header('Access-Control-Allow-Origin', 'http://1200.ecwhale.com'); //先允许跨域请求才能进来
+    res.header('Access-Control-Allow-Origin', 'http://1200.ecwhale.com'); //先允许跨域请求才能进来
     // res.header("Access-Control-Allow-Credentials", "true");//处理cookie信息，如果有，并且不对每次请求都新开一个session
-    // res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
     // res.header('Access-Control-Allow-Headers', 'x-requested-with,content-type');
     res.header('Content-Type', 'text/html;charset=utf-8');
     next();
