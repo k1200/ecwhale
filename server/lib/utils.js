@@ -3,6 +3,15 @@
  * */
 const PASSWORD_ERROR = 1001; // 密码错误
 const LOGOUT = 1000; // 退出登录
+
+const DBCONF = {
+    host     : '39.108.56.66',
+    // port     : '3306',
+    user     : 'root',
+    password : 'wNstEunF78sZmX9m',
+    database : 'sakujima'
+};
+
 exports = module.exports = {
     PASSWORD_ERROR,
     LOGOUT,
@@ -11,7 +20,8 @@ exports = module.exports = {
         return Promise.all(array)
             .then(res => res)
             .catch(error => error)
-    }
+    },
+    DBCONF
 };
 
 

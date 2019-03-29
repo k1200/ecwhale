@@ -11,7 +11,7 @@
                 <img class="decorate-img decorate-left-img" src="../../assets/decorate-01.png" width="475" alt="decorate-01">
                 <img class="decorate-img decorate-right-img" src="../../assets/decorate-02.png" width="285" alt="decorate-02">
                 <div class="decorate-side">
-                    <div class="activity-list">
+                    <div v-if="activityList" class="activity-list">
                         <div class="activity-info">
                             <p class="activity-title"> {{ activityList.ac_title }} </p>
                             <img src="../../assets/japan.png" width="228" height="157" alt="japan">
@@ -91,16 +91,16 @@
 <script>
     // @ is an alias to /src
     import HeaderMain from '@c/headerMain.vue';
-    import FooterMain from '@c/footer.vue';
-    import { onGetHomeData } from "../../service/getData";
-    import { getIntervalTime, timeoutPromise } from "../../config/utils";
+    import FooterMain from '@c/footerMain.vue';
+    import { onGetHomeData, onAddCart } from "../../service/getData";
+    import { getIntervalTime } from "../../config/utils";
 
     export default {
         name: 'home',
         data () {
             return {
                 basicGoods: null,
-                activityList: { goodsList: [] },
+                activityList: null,
                 hotList: null,
                 likeGoodsList: null,
                 activityTime: {}
@@ -111,19 +111,15 @@
             FooterMain
         },
         created() {
-            // onGetHomeData().then(res => {
-            //     this.basicGoods = res.basicGoodsList;
-            //     this.activityList = res.activeGoodsList;
-            //     this.hotList = res.hotGoodsList;
-            //     this.likeGoodsList = res.likeGoodsList;
-            //     console.log(getIntervalTime(this.activityList.ac_end_time).getTime);
-            // });
             this.getData();
 
         },
         computed: {
             activityLoop () {
-                return Math.ceil(this.activityList.goodsList.length / 4);
+                if (this.activityList) {
+                    return Math.ceil(this.activityList.goodsList.length / 4);
+                }
+
             }
         },
         methods: {
@@ -144,16 +140,11 @@
                     this.hotList = res.hotGoodsList;
                     this.likeGoodsList = res.likeGoodsList;
                 });
-                this.activityTime = getIntervalTime(this.activityList.ac_end_time);
-                (function f (self) {
-                    if (self.activityTime.intervalTime > 1000) {
-                        f();
-                    }
-                    timeoutPromise(1000).then(() => {
-                        self.activityTime = getIntervalTime(self.activityTime.intervalTime);
-                        self.activityTime.intervalTime--
-                    })
-                }(this));
+                if (!this.activityList) return false;
+                let intervalTime = getIntervalTime((res) => {
+                    this.activityTime = res;
+                }, this.activityList.ac_end_time);
+                intervalTime.pending = true;
             }
 
         }
@@ -198,18 +189,16 @@
     }
     .activity-hot {
         background-color: #fcecec;
-        padding: 70px 0 60px;
+        padding: 70px 0 0;
     }
     .decorate {
         position: relative;
         width: 1420px;
         margin: 0 auto;
-        background: url('../../assets/decorate-bg.png') no-repeat center;
+        background: url('../../assets/decorate-bg.png') no-repeat;
         background-size: 1360px auto;
         background-position-x: 60px;
-        padding: 44px 0 8px;
-
-        height: 842px;
+        padding: 44px 0 60px;
 
         .decorate-img {
             position: absolute;
@@ -229,8 +218,6 @@
         border: 8px solid #b5404b;
         border-radius: 6px;
         border-top-width: 32px;
-
-        height: 790px;
     }
     .activity-list {
         background-color: #b5404b;

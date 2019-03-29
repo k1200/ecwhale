@@ -1,6 +1,6 @@
 const { LOGOUT } = require("../utils");
 const crypto = require('crypto');
-const { getUserInfoModel, getCartCountModel } = require('../Model/utils');
+const { getUserInfoModel, getCartCountModel, addCartModel } = require('../Model/utils');
 const { loginController } = require('./Login');
 exports = module.exports = {
     async isLoginController (req, res, next) {
@@ -47,5 +47,9 @@ exports = module.exports = {
     async getCartCountController (req, res) {
         const cartList = await getCartCountModel(req.session.member_id, req.params.user_id);
         res.status(200).json(cartList);
+    },
+    async addCartController (req, res) {
+        const result = await getCartCountModel(req.session.member_id, req.params.user_id, req.params.count);
+        res.status(200).json({message: '成功加入购车', status: ''});
     }
 };

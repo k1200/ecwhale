@@ -22,7 +22,6 @@ exports = module.exports = {
         const sql = "SELECT id AS user_id, name, audit_status, phone, sex, data_status FROM ec_member WHERE name=? and recommend_id=? and password=?";
         return db.curd(sql, params)
             .then(res => {
-                res[0].data_status = res[0].data_status.data;
                 return res;
             })
             .catch(err => err);

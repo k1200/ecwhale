@@ -1,14 +1,16 @@
+const { DBCONF } = require('../utils');
 const mysql = require('mysql');
 const db = {};
+const defaultConf = {
+    host     : 'localhost',
+    port     : '3306',
+    user     : 'root',
+    password : '',
+    database : 'sakujima_test1226',
+    stringifyObjects: true
+};
 db.connection = () => {
-    const connection = mysql.createConnection({
-        host     : 'localhost',
-        port     : '3306',
-        user     : 'root',
-        password : '',
-        database : 'sakujima_test1226',
-        stringifyObjects: true
-    });
+    const connection = mysql.createConnection(Object.assign(defaultConf, DBCONF));
     //数据库连接
     connection.connect(err => {
         if(err){

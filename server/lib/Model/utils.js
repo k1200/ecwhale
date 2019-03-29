@@ -83,6 +83,10 @@ exports = module.exports = {
                 .catch(err => err);
         }
     },
+
+    /**
+     * 获取用户信息
+     * */
     async getUserInfoModel (member_id, user_id) {
         const sql = `SELECT id AS user_id, name, audit_status, phone, sex data_status 
                      FROM ec_member 
@@ -96,6 +100,10 @@ exports = module.exports = {
             })
             .catch(err => err);
     },
+
+    /**
+     * 获取购物车数量
+     * */
     async getCartCountModel (member_id, user_id) {
         const sql = `SELECT ec_goods.*, t_goods_cart.id AS cid, t_goods_cart.countnum 
                      FROM t_goods_cart
@@ -106,6 +114,20 @@ exports = module.exports = {
                      AND ec_goods.member_id = ${member_id}
                      AND ec_goods.goods_status = 1 
                      AND ec_goods.data_status = 1`;
+        return db.curd(sql)
+            .then(res => res)
+            .catch(err => err);
+    },
+
+    /**
+     * 将商品加入购物车
+     * */
+    async addCartModel (member_id, user_id, count) {
+        const sql = `UPDATE t_goods_cart 
+                    SET countnum = ${count} 
+                    WHERE id = ${user_id} 
+                    AND ec_member_id = ${member_id} 
+                    AND cart_type = 0`;
         return db.curd(sql)
             .then(res => res)
             .catch(err => err);

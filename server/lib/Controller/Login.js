@@ -3,7 +3,7 @@ const { getShopInfoModel, loginModel } = require('../Model/Login');
 const crypto = require('crypto');
 exports = module.exports = {
     async getShopInfoController (req, res) {
-        const result = await getShopInfoModel(req.headers['x-forwarded-host']);
+        const result = await getShopInfoModel((req.headers['x-forwarded-host'], 'sp.ecwhale.com'));
         req.session.member_id = result[0].member_id;
         res.json(result[0]);
     },
@@ -13,6 +13,7 @@ exports = module.exports = {
         md5.update(data.password);
 
         const result = await loginModel(data.username, req.session.member_id, md5.digest('hex'));
+        console.log(result);
         if (result.length === 0) {
             if (cacheData) {
                 return false;
@@ -20,7 +21,6 @@ exports = module.exports = {
                 return res.json({message: '用户名或密码错误，请重新输入！', status: PASSWORD_ERROR, type: 'PASSWORD_ERROR'});
             }
         }
-
         req.session.auth_token = `${req.session.member_id}_${result[0].id}`;
 
         // createCipher函数接收两个参数
@@ -42,4 +42,3 @@ exports = module.exports = {
         }
     }
 };
-

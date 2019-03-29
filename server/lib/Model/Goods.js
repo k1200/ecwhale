@@ -7,7 +7,7 @@ const TYPE_FLOOR = 2; // 楼层
 
 const getActivity = (member_id) => {
     // table t_activity, t_accessory
-    const nowDate = new Date();
+    const nowDate = new Date('2019-01-31 23:59:59');
     const date = `${nowDate.getFullYear()}-${nowDate.getMonth() + 1}-${nowDate.getDate()}`;
     const sql = `SELECT activity.id AS aid , activity.ac_begin_time, activity.ac_end_time, accessory.accessory_url, activity.ac_title  
                     FROM t_activity activity 
@@ -50,6 +50,8 @@ exports = module.exports = {
     * */
     async activeGoods (member_id) {
         let activityGoods = await getActivity(member_id);
+        console.log(activityGoods);
+        if (!activityGoods) return null;
         const sql = `SELECT ec_goods.id AS ec_gid, ec_goods.goods_jan_code, ec_goods.ec_sales_price, ec_goods.goods_img_url, ec_goods.ec_goods_name, ec_goods.goods_id, 
                     t_activity_goods.ag_salenum, t_activity_goods.ag_price, t_activity_goods.ag_inventory, t_goods.sale_inventory, t_goods.deliver_area 
                     FROM ec_goods 
@@ -68,7 +70,7 @@ exports = module.exports = {
                     AND t_goods.data_status = 1`;
         return db.curd(sql)
             .then(res => (activityGoods.goodsList = res, activityGoods))
-            .catch(err => err);
+            .catch(err => (console.log(err), err));
     },
     hotGoods () {
         // table t_shop_index_set, t_accessory
@@ -83,7 +85,7 @@ exports = module.exports = {
                     ORDER BY t_shop_index_set.sort ASC`;
         return db.curd(sql)
             .then(res => res)
-            .catch(err => err);
+            .catch(err => (console.log(err), err));
     },
     /*
     * @params member_id
@@ -108,7 +110,7 @@ exports = module.exports = {
                      AND eg.data_status = 1 
                      AND tgc.LEVEL = 1 
                      AND tgc.data_status = 1 
-                     AND eg.goods_id in (${goods_ids.join()}) 
+                     AND eg.goods_id in (${goods_ids.filter(i => i).join()}) 
                      ORDER BY g.goods_category_id ASC, g.sale_inventory DESC`;
         return db.curd(sql)
             .then(res => {
@@ -171,6 +173,6 @@ exports = module.exports = {
                      LIMIT 8`;
         return db.curd(sql)
             .then(res => res)
-            .catch(error => error);
+            .catch(err => (console.log(err), err));
     }
 };

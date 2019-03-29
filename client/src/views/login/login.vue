@@ -175,8 +175,15 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         onLogin(this.login_form).then(res => {
-                            this.RECORD_USERINFO(res);
-                            this.$router.go(-1);
+                            if (res.type && res.message) {
+                                this.$message({
+                                    message: res.message,
+                                    type: 'warning'
+                                });
+                            } else {
+                                this.RECORD_USERINFO(res);
+                                this.$router.go(-1);
+                            }
                         });
                     } else {
                         console.log('error submit!!')
