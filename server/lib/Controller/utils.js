@@ -49,7 +49,8 @@ exports = module.exports = {
         res.status(200).json(cartList);
     },
     async addCartController (req, res) {
-        const result = await getCartCountModel(req.session.member_id, req.params.user_id, req.params.count);
-        res.status(200).json({message: '成功加入购车', status: ''});
+        const result = await addCartModel(req.session.member_id, req.headers.ec_member_id, req.query.ec_goods_id, req.query.goods_id, req.query.count);
+        console.log(result);
+        res.status(200).json(result);
     }
 };

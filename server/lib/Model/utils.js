@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { GETDATE } = require('../utils');
 const FIRST_LEVEL = 0; //一级商品分类
 const SECOND_LEVEL = 1; //二级商品分类
 
@@ -108,7 +109,7 @@ exports = module.exports = {
         const sql = `SELECT ec_goods.*, t_goods_cart.id AS cid, t_goods_cart.countnum 
                      FROM t_goods_cart
                      LEFT JOIN ec_goods
-                     ON  t_goods_cart.goods_id = ec_goods.goods_id
+                     ON t_goods_cart.goods_id = ec_goods.goods_id
                      WHERE t_goods_cart.ec_member_id = ${user_id} 
                      AND t_goods_cart.data_status = 1 
                      AND ec_goods.member_id = ${member_id}
@@ -122,14 +123,28 @@ exports = module.exports = {
     /**
      * 将商品加入购物车
      * */
-    async addCartModel (member_id, user_id, count) {
-        const sql = `UPDATE t_goods_cart 
-                    SET countnum = ${count} 
-                    WHERE id = ${user_id} 
-                    AND ec_member_id = ${member_id} 
-                    AND cart_type = 0`;
-        return db.curd(sql)
-            .then(res => res)
-            .catch(err => err);
+    async addCartModel (member_id, user_id, ec_goods_ids, goods_id, count = 1) {
+
+        const haveSql = `SELECT id, countnum
+                     FROM t_goods_cart 
+                     WHERE ec_goods_id = '${ec_goods_ids}' 
+                     AND goods_id = ${goods_id} 
+                     AND ec_member_id = ${user_id} 
+                     AND member_id = ${member_id} 
+                     AND cart_type = 0 
+                     AND data_status = 1`;
+        const upSql = `UPDATE t_goods_cart SET countnum = ${count}
+                       WHERE id = ?`;
+        const current_date = GETDATE().datetime;
+        const insetSql = `INSERT INTO t_goods_cart
+                        (cart_type, goods_id, member_id, ec_member_id, checked, add_time, countnum, data_status, source, ec_goods_id)
+                        VALUE (0, ${goods_id}, ${member_id}, ${user_id}, 1, '${current_date.year + '-' + current_date.month + '-' + current_date.date}',
+                         ${count}, 1, 1, '${ec_goods_ids}')`;
+        const hasGoods = await db.curd(haveSql).then(res => res).catch(err => console.log(err));
+        if (hasGoods.length > 0) {
+            return db.curd(upSql, [hasGoods[0].id]).then((res) => (console.log(res), {count: 0})).catch(err => (console.log(err), err))
+        } else {
+            return db.curd(insetSql).then(() => {count: 1}).catch(err => (console.log(err), err))
+        }
     }
 };

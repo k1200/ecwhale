@@ -2,6 +2,7 @@ import axios from 'axios';
 import { baseUrl } from '../config/env';
 import qs from 'qs';
 import { Loading } from 'element-ui' // 引入加载层
+import { getStore } from '../config/utils'
 
 axios.defaults.withCredentials = true;
 let loadingInstance = null;
@@ -13,6 +14,7 @@ axios.interceptors.request.use(function (config) {
     if (!url.match(/^http/)) {
         config.url = baseUrl + url;
     }
+    config.headers['ec_member_id'] = getStore('user_id')
     if (config.method === 'post') { // post请求时，处理数据
         if (config.contentType === 'json') {
             config.headers['Content-Type'] = 'application/json'

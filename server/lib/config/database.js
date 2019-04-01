@@ -6,7 +6,7 @@ const defaultConf = {
     port     : '3306',
     user     : 'root',
     password : '',
-    database : 'sakujima_test1226',
+    database : 'sakujima',
     stringifyObjects: true
 };
 db.connection = () => {

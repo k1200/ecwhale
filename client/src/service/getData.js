@@ -34,4 +34,4 @@ export const onGetCartList = () => axios(`getCartList/${getStore('user_id')}`);
 /**
  * 将商品加入购物车
  * */
-export const onAddCart = count => axios(`addCart/${getStore('user_id')}/${count}`);
+export const onAddCart = params => axios('addCart', params);

@@ -51,17 +51,23 @@
                     </p>
                 </div>
 
-                <div class="goods-groups">
-                    <div v-if="goodsList.hotGoods" class="hot-goods"><img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </div>
-                    <div class="goods" v-for="goods in goodsList.allGoods" :key="goods.goods_id">
-                        <div class="goods-img"><router-link to="/"><img v-if="+goods.sale_inventory === 0" class="position-center stockup" src="../../assets/stockup.png" alt="已售罄"><img class="position-center" :src="goods.goods_img_url" alt=""></router-link></div>
-                        <div class="goods-info">
-                            <div class="goods-title text-ellipsis"> <router-link to="/"> {{ goods.ec_goods_name }} </router-link></div>
-                            <div class="goods-price"> <span class="price"> ¥{{ goods.ec_sales_price }} </span> <span class="right deliver-area"> {{ goods.deliver_area == "0" ? "保税区发货" : "日本直邮" }} </span> </div>
-                            <button type="button" class="right btn-addcar-goods"> <img src="../../assets/tocart.png" alt=""></button>
-                        </div>
-                    </div>
-                </div>
+                <GoodsList :goodsList="goodsList.allGoods" class="goods-groups">
+                    <template #goodsList-header v-if="goodsList.hotGoods">
+                        <div class="hot-goods"><img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </div>
+                    </template>
+                </GoodsList>
+
+                <!--<div class="goods-groups">-->
+                    <!--<div v-if="goodsList.hotGoods" class="hot-goods"><img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </div>-->
+                    <!--<div class="goods" v-for="goods in goodsList.allGoods" :key="goods.goods_id">-->
+                        <!--<div class="goods-img"><router-link to="/"><img v-if="+goods.sale_inventory === 0" class="position-center stockup" src="../../assets/stockup.png" alt="已售罄"><img class="position-center" :src="goods.goods_img_url" alt=""></router-link></div>-->
+                        <!--<div class="goods-info">-->
+                            <!--<div class="goods-title text-ellipsis"> <router-link to="/"> {{ goods.ec_goods_name }} </router-link></div>-->
+                            <!--<div class="goods-price"> <span class="price"> ¥{{ goods.ec_sales_price }} </span> <span class="right deliver-area"> {{ goods.deliver_area == "0" ? "保税区发货" : "日本直邮" }} </span> </div>-->
+                            <!--<button type="button" class="right btn-addcar-goods" @click="addCart(goods)"> <img src="../../assets/tocart.png" alt=""></button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
 
             </div>
 
@@ -70,18 +76,7 @@
                     <span class="category-title"> 猜你喜欢 </span>
                     <p class="category-child right"> <router-link to="/"> 换一换 </router-link> </p>
                 </div>
-
-                <div class="goods-groups pageView">
-                    <div class="goods" v-for="goods in likeGoodsList" :key="goods.goods_id">
-                        <div class="goods-img"><router-link to="/"><img class="position-center" :src="goods.goods_img_url" alt=""></router-link></div>
-                        <div class="goods-info">
-                            <div class="goods-title text-ellipsis"> <router-link to="/"> {{ goods.ec_goods_name }} </router-link></div>
-                            <div class="goods-price"> <span class="price"> ¥{{ goods.ec_sales_price }} </span> <span class="right deliver-area"> {{ goods.deliver_area == "0" ? "保税区发货" : "日本直邮" }} </span> </div>
-                            <button type="button" class="right btn-addcar-goods"> <img src="../../assets/tocart.png" alt=""></button>
-                        </div>
-                    </div>
-                </div>
-
+                <div class="pageView"> <GoodsList :goodsList="likeGoodsList"/> </div>
             </div>
         </div>
         <FooterMain/>
@@ -92,6 +87,7 @@
     // @ is an alias to /src
     import HeaderMain from '@c/headerMain.vue';
     import FooterMain from '@c/footerMain.vue';
+    import GoodsList from '@c/goodsList.vue';
     import { onGetHomeData, onAddCart } from "../../service/getData";
     import { getIntervalTime } from "../../config/utils";
 
@@ -108,6 +104,7 @@
         },
         components: {
             HeaderMain,
+            GoodsList,
             FooterMain
         },
         created() {
@@ -145,8 +142,15 @@
                     this.activityTime = res;
                 }, this.activityList.ac_end_time);
                 intervalTime.pending = true;
-            }
+            },
+            addCart (item) {
+                onAddCart({ goods_id: item.goods_id, ec_goods_id: item.id }).then(res => {
+                    console.log(res);
+                }).catch(err => {
+                    console.error(err);
+                })
 
+            }
         }
     }
 </script>
@@ -178,6 +182,16 @@
         }
         .el-carousel__indicator.is-active button {
             background-color: #e4b023;
+        }
+    }
+    .goods-groups {
+        .goods {
+            &:nth-child(4n + 1) {
+                margin-left: 10px;
+            }
+            &:nth-child(1), &:nth-child(4) {
+                margin: 0;
+            }
         }
     }
 </style>
@@ -356,79 +370,8 @@
         }
     }
     .goods-groups {
-        display: flex;
-        flex-wrap: wrap;
         .hot-goods {
             width: 535px;
-        }
-        .goods {
-            width: 262.5px;
-            margin-left: 10px;
-            background-color: #fff;
-            padding: 12px 12px 5px;
-            height: 283px;
-            margin-bottom: 10px;
-            &:nth-child(1), &:nth-child(4) {
-                margin: 0;
-            }
-            .goods-info {
-                position: relative;
-                line-height: 24px;
-                padding: 5px 40px 5px 0;
-            }
-            button {
-                position: absolute;
-                right: 0;
-                top: 8px;
-                width: 40px;
-                height: 40px;
-                border: 2px solid $color;
-                border-radius: 50%;
-                padding: 3px;
-                cursor: pointer;
-            }
-            .deliver-area {
-                color: #bfbfbf;
-                font-size: 10px;
-                margin-right: 12px;
-            }
-            .stockup {
-                z-index: 3;
-            }
-        }
-        .goods-title a {
-            color: #333;
-        }
-        .goods-price {
-            font-size: 12px;
-            .price {
-                color: $color;
-                font-weight: bold;
-            }
-        }
-        .goods-img {
-            a {
-                display: block;
-                width: 208px;
-                height: 208px;
-                margin: auto;
-                position: relative;
-            }
-            img {
-                max-width: 100%;
-                max-height: 100%;
-            }
-        }
-    }
-    .pageView {
-        .goods {
-            margin-left: 10px;
-            &:nth-child(4n + 1) {
-                margin: 0;
-            }
-            &:nth-child(4) {
-                margin-left: 10px;
-            }
         }
     }
 
