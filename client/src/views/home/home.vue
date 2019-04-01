@@ -56,19 +56,6 @@
                         <div class="hot-goods"><img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </div>
                     </template>
                 </GoodsList>
-
-                <!--<div class="goods-groups">-->
-                    <!--<div v-if="goodsList.hotGoods" class="hot-goods"><img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </div>-->
-                    <!--<div class="goods" v-for="goods in goodsList.allGoods" :key="goods.goods_id">-->
-                        <!--<div class="goods-img"><router-link to="/"><img v-if="+goods.sale_inventory === 0" class="position-center stockup" src="../../assets/stockup.png" alt="已售罄"><img class="position-center" :src="goods.goods_img_url" alt=""></router-link></div>-->
-                        <!--<div class="goods-info">-->
-                            <!--<div class="goods-title text-ellipsis"> <router-link to="/"> {{ goods.ec_goods_name }} </router-link></div>-->
-                            <!--<div class="goods-price"> <span class="price"> ¥{{ goods.ec_sales_price }} </span> <span class="right deliver-area"> {{ goods.deliver_area == "0" ? "保税区发货" : "日本直邮" }} </span> </div>-->
-                            <!--<button type="button" class="right btn-addcar-goods" @click="addCart(goods)"> <img src="../../assets/tocart.png" alt=""></button>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-
             </div>
 
             <div class="floor-goods-list main-width" >
@@ -88,7 +75,7 @@
     import HeaderMain from '@c/headerMain.vue';
     import FooterMain from '@c/footerMain.vue';
     import GoodsList from '@c/goodsList.vue';
-    import { onGetHomeData, onAddCart } from "../../service/getData";
+    import { onGetHomeData } from "../../service/getData";
     import { getIntervalTime } from "../../config/utils";
 
     export default {
@@ -116,7 +103,6 @@
                 if (this.activityList) {
                     return Math.ceil(this.activityList.goodsList.length / 4);
                 }
-
             }
         },
         methods: {
@@ -142,14 +128,6 @@
                     this.activityTime = res;
                 }, this.activityList.ac_end_time);
                 intervalTime.pending = true;
-            },
-            addCart (item) {
-                onAddCart({ goods_id: item.goods_id, ec_goods_id: item.id }).then(res => {
-                    console.log(res);
-                }).catch(err => {
-                    console.error(err);
-                })
-
             }
         }
     }
