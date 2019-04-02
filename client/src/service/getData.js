@@ -14,7 +14,7 @@ export const onLogin = params => axios('login', params, 'post');
 /**
  * 获取用户信息
  * */
-export const onGetUser = id =>axios(`getUserInfo/${id}`);
+export const onGetUser = id => axios(`getUserInfo/${id}`);
 
 /**
  * 获取首页数据
@@ -35,3 +35,13 @@ export const onGetCartList = () => axios(`getCartList/${getStore('user_id')}`);
  * 将商品加入购物车
  * */
 export const onAddCart = params => axios('addCart', params);
+
+/**
+ * 获取商品详情
+ * */
+export const onGetGoodsDetails = id => axios(`getGoodsDetails/${id}`);
+
+/**
+ * 获取商品类目
+ * */
+export const onGetCategory = () => axios('getCategory');

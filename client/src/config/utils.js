@@ -68,11 +68,34 @@ const getTimeInfo = intervalTime => {
         intervalTime
     };
 };
-export const timeoutPromise = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
-export const intervalTimePromise = ms => new Promise(resolve => {
-    const interval = setInterval(() => resolve(), ms)
+
+/**
+ * timeout
+ * */
+export const timeoutPromise = (ms, callback) => new Promise(resolve =>{
+    const timeout = setTimeout(() => {
+        if (typeof callback === 'function') {
+            callback;
+        }
+        resolve(timeout);
+    }, ms)
 });
 
+/**
+ * 轮询
+ * */
+export const intervalTimePromise = (ms, callback) => new Promise(resolve => {
+    const interval = setInterval(() => {
+        if (typeof callback === 'function') {
+            callback;
+        }
+        resolve(interval);
+    }, ms)
+});
+
+/**
+ * 倒计时函数
+ * */
 export const getIntervalTime = (callback, first_time = getDateTimestamp(), second_time = getDateTimestamp()) => {
     let intervalTime = Math.abs(getDateTimestamp(first_time) - getDateTimestamp(second_time));
     let status = {
@@ -80,6 +103,7 @@ export const getIntervalTime = (callback, first_time = getDateTimestamp(), secon
         pause: false, // true：暂停倒计时，false: 重启倒计时
         stop: false // true: 停止倒计时
     };
+    let [pending, pause, stop] = [false, false, false];
     let timeout = '';
     let interval = () => {
         (async function f () {
@@ -94,6 +118,10 @@ export const getIntervalTime = (callback, first_time = getDateTimestamp(), secon
         pending: {
             set (value) { // 开始倒计时
                 value && interval();
+                pending = value;
+            },
+            get () {
+                return pending;
             }
         },
         pause: {
@@ -103,6 +131,10 @@ export const getIntervalTime = (callback, first_time = getDateTimestamp(), secon
                 } else { // 暂停倒计时
                     clearTimeout(timeout);
                 }
+                pause = value;
+            },
+            get () {
+                return pause;
             }
         }
     });

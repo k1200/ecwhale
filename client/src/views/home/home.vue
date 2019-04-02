@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-        <HeaderMain :basicGoods="basicGoods"/>
+        <HeaderMain/>
         <el-carousel indicator-position="none" :autoplay="false">
             <el-carousel-item v-for="item in 4" :key="item">
                 <img src="../../assets/banner.png" width="100%" height="auto"alt="">
@@ -22,7 +22,7 @@
                         <div class="activity-goods">
                             <el-carousel class="activity-goods-carousel" indicator-position="outside" arrow="always" :autoplay="false">
                                 <el-carousel-item class="goods-side" v-for="index in activityLoop">
-                                    <router-link to="/" class="goods" v-for="goods in activityList.goodsList.slice(loopStart(index), loopEnd(index))" :key="goods.goods_id">
+                                    <router-link :to="'/goodsDetails/' + goods.goods_id" class="goods" v-for="goods in activityList.goodsList.slice(loopStart(index), loopEnd(index))" :key="goods.goods_id">
                                         <div class="goods-img">
                                             <img v-if="+goods.sale_inventory === 0" class="position-center stockup" src="../../assets/stockup.png" alt="已售罄">
                                             <img :src="goods.goods_img_url" width="100%" height="auto" alt="">
@@ -46,14 +46,14 @@
                 <div class="category">
                     <span class="category-title"> {{ goodsList.category_name }} </span>
                     <p class="category-child right">
-                        <router-link to="/"> 全部 </router-link>
-                        <router-link v-for="category in goodsList.child" :key="category.id" to="/"> {{ category.category_name }} </router-link>
+                        <router-link :to="'/products/' + goodsList.id"> 全部 </router-link>
+                        <router-link v-for="category in goodsList.child" :key="category.id" :to="'/products/' + category.id"> {{ category.category_name }} </router-link>
                     </p>
                 </div>
 
                 <GoodsList :goodsList="goodsList.allGoods" class="goods-groups">
                     <template #goodsList-header v-if="goodsList.hotGoods">
-                        <div class="hot-goods"><img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </div>
+                        <router-link tag="div" :to="'/goods/' + goodsList.hotGoods.id" class="hot-goods"> <img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </router-link>
                     </template>
                 </GoodsList>
             </div>

@@ -14,4 +14,8 @@
 
 <style lang="scss">
     @import './style/common.scss';
+    #app {
+        min-height: 100%;
+        position: relative;
+    }
 </style>

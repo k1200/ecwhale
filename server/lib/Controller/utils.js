@@ -1,6 +1,6 @@
 const { LOGOUT } = require("../utils");
 const crypto = require('crypto');
-const { getUserInfoModel, getCartCountModel, addCartModel } = require('../Model/utils');
+const { getUserInfoModel, getCartCountModel, addCartModel, getGoodsCategoryListByMid } = require('../Model/utils');
 const { loginController } = require('./Login');
 exports = module.exports = {
     async isLoginController (req, res, next) {
@@ -35,6 +35,10 @@ exports = module.exports = {
             next();
         }
     },
+
+    /**
+     * 以下需在登录状态下
+     * */
     logoutController (req, res) {
         delete req.session.auth_token;
         res.clearCookie('user');
@@ -50,7 +54,14 @@ exports = module.exports = {
     },
     async addCartController (req, res) {
         const result = await addCartModel(req.session.member_id, req.headers.ec_member_id, req.query.ec_goods_id, req.query.goods_id, req.query.count);
-        console.log(result);
+        res.status(200).json(result);
+    },
+
+    /**
+     * 以下不需要登录状态
+     * */
+    async getCategoryController (req, res) {
+        const result = await getGoodsCategoryListByMid();
         res.status(200).json(result);
     }
 };

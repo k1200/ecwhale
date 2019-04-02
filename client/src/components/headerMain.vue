@@ -14,12 +14,12 @@
         <div class="category-side">
             <div class="category">
                 <div class="main-width">
-                    <div class="category-item"><span class="first-category">首页</span></div>
-                    <div class="category-item" v-for="category in basicGoods" :key="category.id">
-                        <span class="first-category"> {{ category.category_name }}</span>
+                    <div class="category-item"><router-link tag="span" class="first-category" to="/">首页</router-link></div>
+                    <div class="category-item" v-for="category in categories" :key="category.id">
+                        <router-link tag="span" class="first-category" :to="'/products/' + category.id"> {{ category.category_name }}</router-link>
                         <div class="category-child">
                             <div class="main-width">
-                                <span v-for="child in category.child" :key="child.id"> {{ child.category_name }} </span>
+                                <router-link tag="span" v-for="child in category.child" :key="child.id" :to="'/products/' + child.id"> {{ child.category_name }} </router-link>
                             </div>
                         </div>
                     </div>
@@ -30,26 +30,31 @@
 </template>
 
 <script>
-    import { onGetCartList } from '../service/getData';
+    import { onGetCartList, onGetCategory } from '../service/getData';
     import { mapState } from 'vuex'
     export default {
         name: 'headerMain',
         data() {
             return {
                 carCount: 0,
-                keywords: ''
+                keywords: '',
+                categories: []
             }
         },
         created () {
-            onGetCartList().then(res => this.carCount = res.length);
+            Promise.all([onGetCartList(), onGetCategory()])
+                .then(([cartList, category]) => {
+                    this.carCount = cartList.length;
+                    this.categories = category;
+                })
+                .catch(error => console.log(error));
         },
         computed: {
             ...mapState([
                 'shopInfo'
             ])
         },
-        methods: {},
-        props: ['basicGoods']
+        methods: {}
     };
 </script>
 

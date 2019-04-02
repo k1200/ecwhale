@@ -6,6 +6,8 @@ Vue.use(Router);
 
 const login = () => import(/* webpackChunkName: "login" */ '@views/login/login.vue');
 const home = () => import(/* webpackChunkName: "home" */ '@views/home/home.vue');
+const products = () => import(/* webpackChunkName: "products" */ '@views/products/products.vue');
+const goodsDetails = () => import(/* webpackChunkName: "goodsDetails" */ '@views/goodsDetails/goodsDetails.vue');
 
 const header = () => import(/* webpackChunkName: "header" */ '@c/headerTop.vue');
 const footer = () => import(/* webpackChunkName: "footer" */ '@c/footerMin.vue')
@@ -23,17 +25,30 @@ const routes = [{
             path: '',
             redirect: '/home'
         },
+        // 首页
         {
             path: 'home',
             component: home
         },
-        //登录注册页
+        //登录页
         {
             path: '/login',
             component: login,
             meta: {
                 title: '登录'
             }
+        },
+        {
+            path: '/products/:id',
+            component: products,
+            meta: {
+                title: '产品列表'
+            }
+        },
+        {
+            path: '/goodsDetails/:id',
+            component: goodsDetails,
+            name: 'goodsDetails'
         }
     ]
 }];

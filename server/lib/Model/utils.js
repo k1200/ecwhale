@@ -23,6 +23,7 @@ const getGoodsCategoryList = (level, pid = 0) => {
 
 /**
  * 获取在线活动id数组
+ * @return map数据
  */
 const getOnlineActivityIds = member_id => {
     // table: t_activity
@@ -59,6 +60,7 @@ exports = module.exports = {
     },
     /**
      * 根据活动id数组获取在线活动商品
+     * @return map 数据
      */
     async getOnlineActivityGoodsByAids (member_id) {
         // table: t_activity_goods

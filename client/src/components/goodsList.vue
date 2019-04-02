@@ -3,14 +3,14 @@
         <slot name="goodsList-header"></slot>
         <div class="goods" v-for="goods in goodsList" :key="goods.goods_id">
             <div class="goods-img">
-                <router-link to="/">
+                <router-link :to="{ path: `/goodsDetails/${ goods.goods_id}` }">
                     <img v-if="+goods.sale_inventory === 0" class="position-center stockup" src="../assets/stockup.png" alt="已售罄">
                     <img class="position-center" :src="goods.goods_img_url" alt="">
                 </router-link>
             </div>
             <div class="goods-info">
                 <div class="goods-title text-ellipsis">
-                    <router-link to="/"> {{ goods.ec_goods_name }}</router-link>
+                    <router-link :to="{ path: `/goodsDetails/${ goods.goods_id}` }"> {{ goods.ec_goods_name }}</router-link>
                 </div>
                 <div class="goods-price">
                     <span class="price"> ¥{{ goods.ec_sales_price }} </span>
@@ -26,7 +26,6 @@
 </template>
 
 <script>
-    import { onAddCart } from "../service/getData";
     export default {
         name: 'goodsList',
         methods: {
