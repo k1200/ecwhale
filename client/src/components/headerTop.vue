@@ -2,17 +2,17 @@
     <div id="headerTop" v-if="visible">
         <div class="main-width flex-row-between">
             <div>
-                <span>您好 {{ userInfo.name }}，欢迎来到 {{ shopInfo.aftermarket_receive }}</span>
+                <span>您好 {{ userInfo.name }}，欢迎来到 {{ shopInfo.shop_name }}</span>
                 <template v-if="login">
                     <button type="button" class="btn-logout hover-cursor" @click="logout"> 【退出】 </button>
                 </template>
                 <template v-else>
                     <router-link to="login" class="link-login hover-cursor"> 登录 </router-link>
-                    <router-link to="/" class="link-regist hover-cursor"> 免费注册 </router-link>
+                    <router-link to="/register" class="link-regist hover-cursor"> 免费注册 </router-link>
                 </template>
             </div>
             <div class="header-left">
-                <router-link to="home" class="header-nav"> 首页 </router-link> <span class="header-nav"> 购物车 </span> <span class="header-nav"> 个人中心 </span> <span class="header-nav"> 关于我们 </span>
+                <router-link to="/home" class="header-nav"> 首页 </router-link> <span class="header-nav"> 购物车 </span> <span class="header-nav"> 个人中心 </span> <span class="header-nav"> 关于我们 </span>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
           }
         },
         created () {
-            this.visible = !(this.$route.path === '/login');
+            this.visible = !(this.$route.path === '/login' || this.$route.path === '/register');
             this.getUserInfo();
             this.getShopInfo();
         },

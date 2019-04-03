@@ -1,7 +1,8 @@
 import {
     RECORD_USERINFO,
     GET_USERINFO,
-    RECORD_SHOPINFO
+    RECORD_SHOPINFO,
+    SAVE_CATEGORY
 } from './mutation-type.js';
 
 import {setStore, getStore, removeStore} from '../config/utils';
@@ -24,5 +25,8 @@ export default {
             removeStore('user_id');
         }
 
+    },
+    [SAVE_CATEGORY] (state, info) {
+        state.categories = info;
     }
 };

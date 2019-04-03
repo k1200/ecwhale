@@ -6,8 +6,10 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const fileStore = require('session-file-store')(session);
 const logger = require('morgan');
+const fs = require('fs');
 
 const indexRouter = require('./routes/index');
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
 // const usersRouter = require('./Routes/users');
 
 const app = express();

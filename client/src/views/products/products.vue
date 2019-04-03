@@ -46,6 +46,11 @@
             onGetHomeData().then(res => {
                 this.categoryGoods = res.basicGoodsList
             }).catch(err => console.log(err));
+        },
+        watch: {
+            '$route' (to, from) {
+                console.log(to)
+            }
         }
     }
 </script>

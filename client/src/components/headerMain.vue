@@ -30,31 +30,34 @@
 </template>
 
 <script>
-    import { onGetCartList, onGetCategory } from '../service/getData';
-    import { mapState } from 'vuex'
+    import { onGetCartList } from '../service/getData';
+    import { mapState, mapActions } from 'vuex'
     export default {
         name: 'headerMain',
         data() {
             return {
                 carCount: 0,
-                keywords: '',
-                categories: []
+                keywords: ''
             }
         },
         created () {
-            Promise.all([onGetCartList(), onGetCategory()])
-                .then(([cartList, category]) => {
+            Promise.all([onGetCartList(), this.getCategory()])
+                .then(([cartList]) => {
                     this.carCount = cartList.length;
-                    this.categories = category;
                 })
                 .catch(error => console.log(error));
         },
         computed: {
             ...mapState([
-                'shopInfo'
+                'shopInfo',
+                'categories'
             ])
         },
-        methods: {}
+        methods: {
+            ...mapActions([
+                'getCategory'
+            ])
+        }
     };
 </script>
 

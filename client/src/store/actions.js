@@ -1,10 +1,12 @@
 import {
     onGetShopInfo,
-    onGetUser
+    onGetUser,
+    onGetCategory
 } from '../service/getData';
 import {
     GET_USERINFO,
-    RECORD_SHOPINFO
+    RECORD_SHOPINFO,
+    SAVE_CATEGORY
 } from './mutation-type.js';
 import { getStore } from '../config/utils';
 
@@ -18,5 +20,10 @@ export default {
         if (state.shopInfo.member_id) return;
         let res = await onGetShopInfo();
         commit(RECORD_SHOPINFO, res);
+    },
+    async getCategory ({ commit, state }) {
+        if (state.categories.length > 0) return;
+        let res = await onGetCategory();
+        commit(SAVE_CATEGORY, res);
     }
 };

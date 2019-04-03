@@ -144,9 +144,9 @@ exports = module.exports = {
                          ${count}, 1, 1, '${ec_goods_ids}')`;
         const hasGoods = await db.curd(haveSql).then(res => res).catch(err => console.log(err));
         if (hasGoods.length > 0) {
-            return db.curd(upSql, [hasGoods[0].id]).then((res) => (console.log(res), {count: 0})).catch(err => (console.log(err), err))
+            return db.curd(upSql, [hasGoods[0].id]).then((res) => (console.log(res), { count: 0 })).catch(err => (console.log(err), err))
         } else {
-            return db.curd(insetSql).then(() => {count: 1}).catch(err => (console.log(err), err))
+            return db.curd(insetSql).then(res => (console.log(res), { count: 1 })).catch(err => (console.log(err), err))
         }
     }
 };

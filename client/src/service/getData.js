@@ -33,11 +33,13 @@ export const onGetCartList = () => axios(`getCartList/${getStore('user_id')}`);
 
 /**
  * 将商品加入购物车
+ * @params params { ec_goods_id, goods_id, count }
  * */
 export const onAddCart = params => axios('addCart', params);
 
 /**
  * 获取商品详情
+ * @params id 商品id
  * */
 export const onGetGoodsDetails = id => axios(`getGoodsDetails/${id}`);
 

@@ -1,9 +1,9 @@
 <template>
     <div id="login">
         <header class="header main-width ec-color">
-      <span v-if="dataList.logo">
-        <img :src="dataList.logo">
-      </span>
+              <span v-if="dataList.logo">
+                <img :src="dataList.logo">
+              </span>
             <span class="shop-name" v-else>{{ dataList.name }}</span>
             <span class="partition">欢迎登录</span>
         </header>
@@ -72,14 +72,14 @@
                     <el-form-item>
                         <div class="flex-row-between">
                             <router-link to="/" style="color: #666">忘记密码</router-link>
-                            <router-link class="ec-link" to="/">立即注册»</router-link>
+                            <router-link class="ec-link" to="/register">立即注册»</router-link>
                         </div>
                     </el-form-item>
                 </el-form>
             </div>
         </article>
         <!--<footer class="footer main-width">-->
-            <!--{{ dataList.aq }}-->
+        <!--{{ dataList.aq }}-->
         <!--</footer>-->
     </div>
 </template>
@@ -87,7 +87,7 @@
 <script>
     import verify from '../../components/verify.vue';
     import { mapMutations } from 'vuex'
-    import { onGetShopInfo, onLogin } from "../../service/getData";
+    import {onGetShopInfo, onLogin} from "../../service/getData";
 
     export default {
         data() {
@@ -214,9 +214,11 @@
 </style>
 <style lang="scss" scoped>
     @import "../../style/variate";
+
     #login {
         margin-bottom: 80px;
     }
+
     header {
         height: 88px;
         line-height: 88px;

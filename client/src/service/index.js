@@ -36,8 +36,12 @@ axios.interceptors.response.use(
         loadingInstance.close();
         if (response.status === 200) {
             let data = response.data;
-            if (data) {
-
+            if (typeof data === 'string') {
+                try {
+                    data = JSON.parse(data);
+                } catch (e) {
+                    console.log(e)
+                }
             }
             return data
         } else {
@@ -45,6 +49,7 @@ axios.interceptors.response.use(
         }
 
     }, error => {
+        console.log(error)
         loadingInstance.close();
         let code = error.message.match(/code\s+\d+/)[0].split(" ")[1];
         switch (+code) {

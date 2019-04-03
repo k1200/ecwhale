@@ -5,6 +5,7 @@ import App from '../App';
 Vue.use(Router);
 
 const login = () => import(/* webpackChunkName: "login" */ '@views/login/login.vue');
+const register = () => import(/* webpackChunkName: "register" */ '@views/register/register.vue');
 const home = () => import(/* webpackChunkName: "home" */ '@views/home/home.vue');
 const products = () => import(/* webpackChunkName: "products" */ '@views/products/products.vue');
 const goodsDetails = () => import(/* webpackChunkName: "goodsDetails" */ '@views/goodsDetails/goodsDetails.vue');
@@ -38,6 +39,15 @@ const routes = [{
                 title: '登录'
             }
         },
+        // 注册
+        {
+            path: '/register',
+            component: register,
+            meta: {
+                title: '注册'
+            }
+        },
+        // 产品列表
         {
             path: '/products/:id',
             component: products,
@@ -45,6 +55,7 @@ const routes = [{
                 title: '产品列表'
             }
         },
+        // 商品详情
         {
             path: '/goodsDetails/:id',
             component: goodsDetails,

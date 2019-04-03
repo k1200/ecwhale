@@ -10,6 +10,7 @@ const state = {
     login: false, // 是否登录
     userInfo: {}, // 用户信息
     shopInfo: {}, // 商家信息
+    categories: [], // 产品分类
 
     newAddress: [], // 确认订单页新的地址
     choosedAddress: null, // 选择地址
