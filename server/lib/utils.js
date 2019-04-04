@@ -1,18 +1,13 @@
-/**
- * status 200 error code
- * */
-const PASSWORD_ERROR = 1001; // 密码错误
-const LOGOUT = 1000; // 退出登录
-
-const DBCONF = {
-    // host     : '39.108.56.66',
-    // // port     : '3306',
-    // user     : 'root',
-    // password : 'wNstEunF78sZmX9m',
-    // database : 'sakujima'
+const { ERROR_STATUS, NORMAL_STATUS } = require("./constUtils");
+const isObject = params => Object.prototype.toString.call(params) === "[object Object]";
+const isArray = params => Object.prototype.toString.call(params) === "[object Array]";
+const isFun = params => typeof params === 'function';
+const promiseAll = array => {
+    return Promise.all(array)
+        .then(res => res)
+        .catch(error => error)
 };
-
-const GETDATE  = (time = new Date()) => {
+const getDate  = (time = new Date()) => {
     time = new Date(time);
     const timestamps = time.getTime();
     const datetime = {
@@ -28,34 +23,34 @@ const GETDATE  = (time = new Date()) => {
 };
 
 exports = module.exports = {
-    PASSWORD_ERROR,
-    LOGOUT,
-
-    promiseAll (array) {
-        return Promise.all(array)
-            .then(res => res)
-            .catch(error => error)
-    },
-    DBCONF,
-    GETDATE
+    isObject,
+    isArray,
+    isFun,
+    promiseAll,
+    getDate,
+    returnRes (res, ...params) {
+        if (params.length === 1 && isObject(params[0])) {
+            res.json(params[0]);
+        } else if (params.length >= 1) {
+            let [status, code, message] = [2000, '', ''];
+            for (value of params) {
+                if (typeof value === 'string') {
+                    message = value;
+                } else {
+                    code = value;
+                    value = value.toString();
+                    if (+value.slice(0, 1) === 1) {
+                        status = ERROR_STATUS;
+                    } else if (+value.slice(0, 1) === 2) {
+                        status = NORMAL_STATUS;
+                    }
+                }
+            }
+            res.json({ message, status, code });
+        } else {
+            res.end('http end!');
+        }
+        res.end();
+    }
 
 };
-
-
-
-// const ERROR_TYPE = 'error_type';
-// const HOT_GOODS_TYPE = 'hot_goods_type';
-// const CATEGORY_TYPE = 'category_type';
-//
-// exports = module.exports = {
-//     [ERROR_TYPE]: {
-//         sql: 1
-//     },
-//     [HOT_GOODS_TYPE]: {
-//         hot: 1, // 爆款
-//         floor: 2 // 楼层
-//     },
-//     CATEGORY_TYPE: {
-//
-//     }
-// };

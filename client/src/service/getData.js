@@ -47,3 +47,23 @@ export const onGetGoodsDetails = id => axios(`getGoodsDetails/${id}`);
  * 获取商品类目
  * */
 export const onGetCategory = () => axios('getCategory');
+
+/**
+ * 获取手机验证码
+* */
+export const onGetTelCode = tel => axios(`getTelCode/${tel}`);
+
+/**
+ * 获取图形验证码
+ * */
+export const onGetImgCode = () => axios('getImgCode');
+
+/**
+ * 验证手机号码是否注册
+ * */
+export const onIsRegister = tel => axios(`isRegister/${tel}`);
+
+/**
+ * 注册账号
+ * */
+export const onRegister = params => axios('register', params, 'post');

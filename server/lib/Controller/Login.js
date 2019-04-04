@@ -1,11 +1,12 @@
-const { PASSWORD_ERROR } = require("../utils");
+const { PASSWORD_ERROR } = require("../constUtils");
+const { returnRes } = require("../utils");
 const { getShopInfoModel, loginModel } = require('../Model/Login');
 const crypto = require('crypto');
 exports = module.exports = {
     async getShopInfoController (req, res) {
         const result = await getShopInfoModel((req.headers['x-forwarded-host'], 'sp.ecwhale.com'));
         req.session.member_id = result[0].member_id;
-        res.json(result[0]);
+        returnRes(res, result[0]);
     },
     async loginController (req, res, cacheData = null) {
         const data = cacheData || req.body;
@@ -13,15 +14,16 @@ exports = module.exports = {
         md5.update(data.password);
 
         const result = await loginModel(data.username, req.session.member_id, md5.digest('hex'));
-        console.log(result);
         if (result.length === 0) {
             if (cacheData) {
                 return false;
             } else {
-                return res.json({message: '用户名或密码错误，请重新输入！', status: PASSWORD_ERROR, type: 'PASSWORD_ERROR'});
+                return returnRes(res, '用户名或密码错误，请重新输入！', PASSWORD_ERROR);
             }
         }
         req.session.auth_token = `${req.session.member_id}_${result[0].id}`;
+
+        /* AES AES是一种常用的对称加密算法，加解密都用同一个密钥 */
 
         // createCipher函数接收两个参数
         // 第一个参数为 加密方式
@@ -38,7 +40,7 @@ exports = module.exports = {
         if (cacheData) {
             return true;
         } else {
-            return res.json(result[0]);
+            return returnRes(res, result[0]);
         }
     }
 };

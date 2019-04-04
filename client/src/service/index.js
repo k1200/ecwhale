@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { baseUrl } from '../config/env';
 import qs from 'qs';
-import { Loading } from 'element-ui' // 引入加载层
-import { getStore } from '../config/utils'
+import { Loading } from 'element-ui'; // 引入加载层
+import { getStore } from '../config/utils';
 
 axios.defaults.withCredentials = true;
 let loadingInstance = null;
@@ -36,13 +36,6 @@ axios.interceptors.response.use(
         loadingInstance.close();
         if (response.status === 200) {
             let data = response.data;
-            if (typeof data === 'string') {
-                try {
-                    data = JSON.parse(data);
-                } catch (e) {
-                    console.log(e)
-                }
-            }
             return data
         } else {
             return response.status

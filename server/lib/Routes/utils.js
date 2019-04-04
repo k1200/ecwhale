@@ -6,7 +6,10 @@ const {
     logoutController,
     getCartCountController,
     addCartController,
-    getCategoryController } = require('../Controller/utils');
+    getCategoryController,
+    getTelCodeController,
+    getImgCodeController,
+    isRegisterController } = require('../Controller/utils');
 
 /**
  * 需要登录
@@ -19,7 +22,10 @@ loginRouter.get('/addCart', (req, res) => addCartController(req, res));
 /**
  * 不需要登录
  * */
-normalRouter.get('/getCategory', (req, res) => getCategoryController(res, res));
+normalRouter.get('/getCategory', (req, res) => getCategoryController(req, res));
+normalRouter.get('/getTelCode/:tel', (req, res) => getTelCodeController(req, res));
+normalRouter.get('/getImgCode', (req, res) => getImgCodeController(req, res));
+normalRouter.get('/isRegister/:tel', (req, res) => isRegisterController(req, res));
 module.exports = {
     loginRouter,
     normalRouter
