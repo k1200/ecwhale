@@ -1,5 +1,6 @@
 import {
     onGetShopInfo,
+    onGetShopDetails,
     onGetUser,
     onGetCategory
 } from '../service/getData';
@@ -16,9 +17,9 @@ export default {
         let res = await onGetUser(getStore('user_id'));
         commit(GET_USERINFO, res);
     },
-    async getShopInfo ({ commit, state }) {
+    async getShopDetails ({ commit, state }) {
         if (state.shopInfo.member_id) return;
-        let res = await onGetShopInfo();
+        let res = await onGetShopDetails();
         commit(RECORD_SHOPINFO, res);
     },
     async getCategory ({ commit, state }) {

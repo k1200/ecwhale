@@ -1,5 +1,5 @@
 const { LOGOUT } = require("../constUtils");
-const { returnRes, getDate } = require("../utils");
+const { returnRes, createError, getDate } = require("../utils");
 
 const crypto = require('crypto');
 const { loginController } = require('./Login');
@@ -8,7 +8,8 @@ const {
     getCartCountModel,
     addCartModel,
     getGoodsCategoryListByMid,
-    isRegisterModel } = require('../Model/utils');
+    isRegisterModel,
+    getShopDetailsModel } = require('../Model/utils');
 
 exports = module.exports = {
     async isLoginController (req, res, next) {
@@ -68,7 +69,26 @@ exports = module.exports = {
         const result = await getGoodsCategoryListByMid();
         returnRes(res, result);
     },
-    // 获取手机验证码
+
+    async isRegisterController (req, res) {
+        returnRes(res, req.body);
+    },
+
+
+
+    /**
+     * @desc 获取商城信息
+     */
+    async getShopDetailsController (req, res) {
+        let result = await getShopDetailsModel();
+        return returnRes(res, result);
+    },
+
+    /**
+     * @desc 获取手机验证码
+     * @param {object} req
+     * @param {object} res
+     * */
     getTelCodeController (req, res) {
         if (!req.params.tel) res.status(200).json({ status: 1, meassage: '请输入手机号码'});
 
@@ -82,18 +102,17 @@ exports = module.exports = {
         md5.update('code-' + sessionID);
         sessionID = md5.digest('hex');
 
+        let time = 1000 * 60 * 2; // 手机验证码保存2min
         req.session.tel_code = JSON.stringify({[sessionID]: code});
         res.cookie("tel_code", sessionID, {
-            maxAge: 1000 * 60 * 2  // 手机验证码保存2min
+            maxAge: time
         });
 
-        returnRes(res, '手机验证码获取成功，请注意查收！' + code);
+        return returnRes(res, { message: '手机验证码获取成功，请注意查收！' + code, time });
     },
     // 获取图形验证码
     getImgCodeController (req, res) {
 
     },
-    async isRegisterController (req, res) {
-        returnRes(res, req.body);
-    }
+
 };

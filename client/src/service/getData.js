@@ -67,3 +67,8 @@ export const onIsRegister = tel => axios(`isRegister/${tel}`);
  * 注册账号
  * */
 export const onRegister = params => axios('register', params, 'post');
+
+/**
+ * @desc 获取商城信息
+ * */
+export const onGetShopDetails = () => axios('getShopDetails');

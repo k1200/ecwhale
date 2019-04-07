@@ -1,4 +1,4 @@
-const { DBCONF } = require('../utils');
+const { DBCONF } = require('../constUtils');
 const mysql = require('mysql');
 const db = {};
 const defaultConf = {
@@ -6,7 +6,7 @@ const defaultConf = {
     port     : '3306',
     user     : 'root',
     password : '',
-    database : 'sakujima',
+    database : 'k1200',
     stringifyObjects: true
 };
 db.connection = () => {
@@ -34,13 +34,8 @@ db.close = connection => {
 };
 db.curd = (sql, param = '', connection = db.connection()) => {
     return new Promise((resolve, reject) => {
-        connection.query(sql, param, (err, data) => {
-            if(err) {
-                err.type = 'sql';
-                reject(err);
-            } else {
-                resolve(data);
-            }
+        connection.query(sql, param, (error, data) => {
+            error ? reject(error) : resolve(data);
         })
     })
 };

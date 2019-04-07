@@ -20,13 +20,19 @@ exports = module.exports = {
     ISREGISTER: 2002, // 手机号码已注册
 
     /**
+     * 系统错误
+     * */
+    SYSERROR: 4000,
+    SQL_ERROR: 4001, // sql 错误
+
+    /**
      * 数据库配置
      * */
     DBCONF: {
-        host     : '39.108.56.66',
-        // port     : '3306',
-        user     : 'root',
-        password : 'wNstEunF78sZmX9m',
-        database : 'sakujima'
+        // host     : '39.108.56.66',
+        // // port     : '3306',
+        // user     : 'root',
+        // password : 'wNstEunF78sZmX9m',
+        // database : 'sakujima'
     }
 };

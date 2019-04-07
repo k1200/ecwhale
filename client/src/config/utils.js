@@ -74,8 +74,8 @@ const getTimeInfo = intervalTime => {
  * */
 export const timeoutPromise = (ms, callback) => new Promise(resolve =>{
     const timeout = setTimeout(() => {
-        if (typeof callback === 'export const ') {
-            callback;
+        if (typeof callback === 'function') {
+            callback();
         }
         resolve(timeout);
     }, ms)
@@ -86,8 +86,8 @@ export const timeoutPromise = (ms, callback) => new Promise(resolve =>{
  * */
 export const intervalTimePromise = (ms, callback) => new Promise(resolve => {
     const interval = setInterval(() => {
-        if (typeof callback === 'export const ') {
-            callback;
+        if (typeof callback === 'function') {
+            callback();
         }
         resolve(interval);
     }, ms)
@@ -111,7 +111,7 @@ export const getIntervalTime = (callback, first_time = getDateTimestamp(), secon
             if (status.stop) return false;
             timeout = setTimeout(() => {
                 callback(getTimeInfo(intervalTime -= 1000));
-                if (intervalTime > 1000) f();
+                if (intervalTime >= 1000 ) f();
             }, 1000);
         }());
     };

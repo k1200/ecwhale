@@ -1,5 +1,7 @@
 const db = require('../config/database');
-const { GETDATE } = require('../utils');
+const { SQL_ERROR } = require('../constUtils');
+const { createError, getDate } = require('../utils');
+
 const FIRST_LEVEL = 0; //一级商品分类
 const SECOND_LEVEL = 1; //二级商品分类
 
@@ -137,7 +139,7 @@ exports = module.exports = {
                      AND data_status = 1`;
         const upSql = `UPDATE t_goods_cart SET countnum = ${count}
                        WHERE id = ?`;
-        const current_date = GETDATE().datetime;
+        const current_date = getDate().datetime;
         const insetSql = `INSERT INTO t_goods_cart
                         (cart_type, goods_id, member_id, ec_member_id, checked, add_time, countnum, data_status, source, ec_goods_id)
                         VALUE (0, ${goods_id}, ${member_id}, ${user_id}, 1, '${current_date.year + '-' + current_date.month + '-' + current_date.date}',
@@ -148,5 +150,17 @@ exports = module.exports = {
         } else {
             return db.curd(insetSql).then(res => (console.log(res), { count: 1 })).catch(err => (console.log(err), err))
         }
-    }
+    },
+
+
+    /**
+     * @desc 获取商城信息
+     * @returns {promise}
+     */
+    getShopDetailsModel () {
+        const sql = "SELECT * FROM k_shop";
+        return db.curd(sql)
+            .then(res => res[0])
+            .catch(error => createError(SQL_ERROR, error));
+    },
 };

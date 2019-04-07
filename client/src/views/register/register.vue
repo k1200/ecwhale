@@ -31,7 +31,7 @@
                                   autocomplete="off"
                                   :placeholder="rule.tel_code.message"
                                   clearable>
-                            <button type="button" slot="append" class="getTelCode" @click="getTelCode">获取验证码</button>
+                            <button type="button" slot="append" class="getTelCode" @click="getTelCode">{{ telcode_text }}</button>
                         </el-input>
                     </el-form-item>
                     <el-form-item class="register-input" label="初始密码：" prop="password">
@@ -70,9 +70,9 @@
 </template>
 
 <script>
-    import { mapState, mapActions } from 'vuex';
+    import { mapState } from 'vuex';
     import { onGetTelCode, onGetImgCode, onRegister } from "../../service/getData";
-    import { isEmpty, isTel, getDateTimestamp } from "../../config/utils";
+    import { isTel, getIntervalTime } from "../../config/utils";
 
     export default {
         name: 'register',
@@ -91,13 +91,14 @@
             };
             return {
                 form: {
-                    tel: '',
+                    tel: '15828868845',
                     tel_code: '',
                     password: '',
                     password_again: '',
                     code: ''
                 },
-                rule
+                rule,
+                telcode_text: '获取验证码'
             }
         },
         computed:{
@@ -110,13 +111,19 @@
         },
         methods: {
             getTelCode () {
-                this.$refs.form.validateField('tel', valid => {
+                this.$refs.form.validateField('tel', async valid => {
                     if (!valid) {
-                        onGetTelCode(this.form.tel).then(res => {
-                            console.log(res)
-                        }).catch(error => console.log(error))
+                        let res = await onGetTelCode(this.form.tel);
+                        let intervalTime = getIntervalTime(time => {
+                            if (time.intervalTime > 0) {
+                                this.telcode_text = `${time.intervalTime / 1000}s后,重新获取`;
+                            } else {
+                                this.telcode_text = `获取验证码`;
+                            }
+                        }, 0, res.time);
+                        intervalTime.pending = true;
                     } else {
-                        console.log(valid)
+                        console.log(valid);
                         return false;
                     }
                 });
@@ -175,7 +182,7 @@
         height: 88px;
         line-height: 88px;
         margin-bottom: 20px;
-        box-shadow:0px 0px 9px 0px rgba(0, 0, 0, 0.11);
+        box-shadow:0 0 9px 0 rgba(0, 0, 0, 0.11);
         background-color: #fff;
         span {
             vertical-align: middle;
@@ -222,6 +229,9 @@
         color: #fff;
         font-size: 12px;
         cursor: pointer;
+        margin: -10px -20px;
+        padding: 12px 20px;
+        display: inline-block;
     }
     .register-input {
         margin-bottom: 25px;

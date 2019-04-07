@@ -30,8 +30,9 @@
         },
         created () {
             this.visible = !(this.$route.path === '/login' || this.$route.path === '/register');
-            this.getUserInfo();
-            this.getShopInfo();
+            // this.getUserInfo();
+            this.getShopDetails();
+            // this.getShopInfo();
         },
         computed: {
             ...mapState([
@@ -43,7 +44,7 @@
         methods: {
             ...mapActions([
                 'getUserInfo',
-                'getShopInfo'
+                'getShopDetails'
             ]),
             ...mapMutations([
                'GET_USERINFO'
