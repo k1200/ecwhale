@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { ERROR_STATUS, NORMAL_STATUS, SYSERROR } = require("./constUtils");
+const { ERROR_STATUS, NORMAL_STATUS, SYSERROR, SQL_ERROR } = require("./constUtils");
 const isObject = params => Object.prototype.toString.call(params) === "[object Object]";
 const isArray = params => Object.prototype.toString.call(params) === "[object Array]";
 const isFun = params => typeof params === 'function';
@@ -14,7 +14,7 @@ const promiseAll = array => {
  * @param {string|number|object} [time = new Date()]
  * @returns: {object} b
  * @return: {number} b.timestamps 时间戳
- * @return：{object} b.datetime 时间对象
+ * @return: {object} b.datetime 时间对象
  * @return: {number} b.datetime.year|b.datetime.month|b.datetime.date|b.datetime.ms|b.datetime.s|b.datetime.min|b.datetime.h
  * */
 const getDate  = (time = new Date()) => {
@@ -53,6 +53,13 @@ const createError = (error_code, error) => {
     return error_code;
 };
 
+const sqlReturn = data => {
+    return [true, data];
+};
+const sqlReturnError = (error) => {
+    return [false, createError(SQL_ERROR, error)];
+};
+
 /**
  * @desc 将结果返回给客户端
  * @param {object} res 客户端响应对象
@@ -65,38 +72,56 @@ const createError = (error_code, error) => {
  *                    [object] 对象
  * */
 const returnRes = (res, result, ...params) => {
-    if ((isArray(result) && result[0]) || result) {
-        if (params.length === 1 && isObject(params[0])) {
-            res.json(params[0]);
-        } else if (params.length >= 1) {
-            let [status, code, message] = [2000, '', ''];
-            for (value of params) {
-                if (typeof value === 'string' && isNaN(value)) {
-                    message = value;
-                } else {
-                    code = value;
-                    value = value.toString();
-                    value = +value.slice(0, 1);
-                    if (value === 1) {
-                        status = ERROR_STATUS;
-                    } else if (value === 2) {
-                        status = NORMAL_STATUS;
-                    } else if (value === 4) {
-                        status = SYSERROR;
-                        message = `系统错误，请联系管理员！<br/>ERROR CODE：${code}`
-                    }
-                }
-            }
-            res.json({ message, status, code });
+    let [status, code, message] = [2000, '', ''];
+    let res_status = value => {
+        if (typeof value === 'string' && isNaN(value)) {
+            message = value;
         } else {
-            res.end('http end!');
+            code = value;
+            value = value.toString();
+            value = +value.slice(0, 1);
+            if (value === 1) {
+                status = ERROR_STATUS;
+            } else if (value === 2) {
+                status = NORMAL_STATUS;
+            } else if (value === 4) {
+                status = SYSERROR;
+                message = `系统错误，请联系管理员！<br/>ERROR CODE：${code}`
+            }
+        }
+    };
+    console.log(result);
+    if ((isArray(result) && result[0]) || result) {
+        if (params.length === 0 && isArray(result)) {
+            if (isObject(result[1])) {
+                return res.json(result[1]);
+            } else {
+                if (isArray(result[1])) {
+                    return res.json(result[1]);
+                }
+                res_status(result[1]);
+                return res.json({ message, status, code });
+            }
+        } else if (params.length === 1 && isObject(params[0])) {
+            return res.json(params[0]);
+        } else if (params.length >= 0) {
+            for (value of params) {
+                res_status(value);
+            }
+            if (params.length === 0) res_status(result[1]);
+            return res.json({ message, status, code });
         }
     } else {
-
+        if (isArray(result)) {
+            res_status(result[1]);
+            return res.json({ message, status, code });
+        } else {
+            for (value of params) {
+                res_status(value);
+            }
+            return res.json({ message, status, code });
+        }
     }
-
-
-    res.end();
 };
 
 /**
@@ -184,5 +209,7 @@ exports = module.exports = {
     createCryptoMd5,
     createCryptoCipher,
     createCryptoDecipher,
-    getMysqlDate
+    getMysqlDate,
+    sqlReturn,
+    sqlReturnError
 };

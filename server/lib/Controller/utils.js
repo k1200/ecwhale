@@ -1,5 +1,5 @@
 const { LOGOUT } = require("../constUtils");
-const { returnRes, createError, getDate } = require("../utils");
+const { returnRes, createError, getDate, createCryptoMd5 } = require("../utils");
 
 const crypto = require('crypto');
 const { loginController } = require('./Login');
@@ -9,7 +9,8 @@ const {
     addCartModel,
     getGoodsCategoryListByMid,
     isRegisterModel,
-    getShopDetailsModel } = require('../Model/utils');
+
+    getCategoryModel } = require('../Model/utils');
 
 exports = module.exports = {
     async isLoginController (req, res, next) {
@@ -65,24 +66,20 @@ exports = module.exports = {
      * 以下不需要登录状态
      * */
     // 获取产品分类
-    async getCategoryController (req, res) {
-        const result = await getGoodsCategoryListByMid();
-        returnRes(res, result);
-    },
+    // async getCategoryController (req, res) {
+    //     const result = await getGoodsCategoryListByMid();
+    //     return res.json(result);
+    // },
 
     async isRegisterController (req, res) {
         returnRes(res, req.body);
     },
 
-
-
-    /**
-     * @desc 获取商城信息
-     */
-    async getShopDetailsController (req, res) {
-        let result = await getShopDetailsModel();
-        return returnRes(res, result);
+    async getCategoryController (req, res) {
+        const result = await getCategoryModel();
+        returnRes(res, result);
     },
+
 
     /**
      * @desc 获取手机验证码
@@ -90,17 +87,11 @@ exports = module.exports = {
      * @param {object} res
      * */
     getTelCodeController (req, res) {
-        if (!req.params.tel) res.status(200).json({ status: 1, meassage: '请输入手机号码'});
+        if (!req.params.tel) res.status(200).json({ status: 1, message: '请输入手机号码'});
 
         let code = parseInt(Math.random() * 10000); // 模拟手机验证码
         let sessionID = getDate().timestamps;
-
-        /* md5（sha1，sha256, sha512）是一种常用的哈希算法，用于给任意数据一个“签名”。 */
-        // md5（sha1，sha256, sha512） 加密
-        // hex 表示方法
-        let md5 = crypto.createHash('md5');
-        md5.update('code-' + sessionID);
-        sessionID = md5.digest('hex');
+        sessionID = createCryptoMd5(sessionID);
 
         let time = 1000 * 60 * 2; // 手机验证码保存2min
         req.session.tel_code = JSON.stringify({[sessionID]: code});
@@ -108,7 +99,7 @@ exports = module.exports = {
             maxAge: time
         });
 
-        return returnRes(res, { message: '手机验证码获取成功，请注意查收！' + code, time });
+        return returnRes(res, true, { message: '手机验证码获取成功，请注意查收！' + code, time });
     },
     // 获取图形验证码
     getImgCodeController (req, res) {

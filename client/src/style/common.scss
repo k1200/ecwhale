@@ -25,6 +25,9 @@ html, body {
 a:hover, button:hover {
   outline: none
 }
+//button[disabled] {
+//  background-color: $minor_color;
+//}
 .min-width {
   min-width: $min_width
 }

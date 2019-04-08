@@ -1,25 +1,11 @@
 const db = require('../config/database');
 exports = module.exports = {
-    /*
-    * @params domain
-    *
-    * @return result 查询结果
-    *
-    * */
-    getShopInfoModel (...params) {
-        const sql = "SELECT * FROM ec_shop WHERE domain=?";
-        return db.curd(sql, params);
-    },
-    /*
-    * @params name
-    * @params member_id
-    * @params password
-    *
-    * @return result 查询结果
-    *
-    * */
+
+    /**
+     * @desc 登录操作
+     * */
     loginModel (...params) {
-        const sql = "SELECT id AS user_id, name, audit_status, phone, sex, data_status FROM ec_member WHERE name=? and recommend_id=? and password=?";
+        const sql = "SELECT id AS user_id, username, tel FROM k_user WHERE name=? and recommend_id=? and password=?";
         return db.curd(sql, params)
             .then(res => {
                 return res;

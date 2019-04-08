@@ -30,7 +30,7 @@ exports = module.exports = {
      * */
     DBCONF: {
         // host     : '39.108.56.66',
-        // // port     : '3306',
+        // port     : '3306',
         // user     : 'root',
         // password : 'wNstEunF78sZmX9m',
         // database : 'sakujima'

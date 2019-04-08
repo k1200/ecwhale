@@ -1,10 +1,10 @@
 <template>
     <div id="login">
         <header class="header main-width ec-color">
-              <span v-if="dataList.logo">
-                <img :src="dataList.logo">
+              <span v-if="shopInfo.logo">
+                <img :src="shopInfo.logo">
               </span>
-            <span class="shop-name" v-else>{{ dataList.name }}</span>
+            <span class="shop-name" v-else>{{ shopInfo.shop_name }}</span>
             <span class="partition">欢迎登录</span>
         </header>
         <article class="article">
@@ -86,8 +86,9 @@
 
 <script>
     import verify from '../../components/verify.vue';
-    import { mapMutations } from 'vuex'
-    import {onGetShopInfo, onLogin} from "../../service/getData";
+    import { mapState, mapMutations } from 'vuex'
+    import { onLogin } from "../../service/getData";
+    import { ERROR_STATUS, PASSWORD_ERROR } from "../../config/constUtils"
 
     export default {
         data() {
@@ -132,19 +133,19 @@
             };
         },
         created() {
-            onGetShopInfo().then(res => {
-                this.dataList.name = res.shop_name;
-                this.RECORD_SHOPINFO(res);
-            });
+
         },
         components: {
             verify
         },
-        computed: {},
+        computed: {
+            ...mapState([
+                'shopInfo'
+            ])
+        },
         methods: {
             ...mapMutations([
-                'RECORD_USERINFO',
-                'RECORD_SHOPINFO'
+                'RECORD_USERINFO'
             ]),
             verifySuccess(options) {
                 if (options) {
@@ -175,7 +176,7 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         onLogin(this.login_form).then(res => {
-                            if (res.type && res.message) {
+                            if (+res.status === +ERROR_STATUS) {
                                 this.$message({
                                     message: res.message,
                                     type: 'warning'
@@ -183,6 +184,7 @@
                             } else {
                                 this.RECORD_USERINFO(res);
                                 this.$router.go(-1);
+
                             }
                         });
                     } else {

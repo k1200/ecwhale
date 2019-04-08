@@ -20,7 +20,7 @@ const getActivity = (member_id) => {
                     AND activity.ac_begin_time <= '${date}' 
                     AND activity.ac_end_time >= '${date}' 
                     ORDER BY activity.ac_sort ASC`;
-    return db.curd(sql, [member_id])
+    return db.curd(sql, [101158])
         .then(res => res[0])
         .catch(err => err);
 };
@@ -49,7 +49,7 @@ exports = module.exports = {
     *
     * */
     async activeGoods (member_id) {
-        let activityGoods = await getActivity(member_id);
+        let activityGoods = await getActivity(101158);
         console.log(activityGoods);
         if (!activityGoods) return null;
         const sql = `SELECT ec_goods.id AS ec_gid, ec_goods.goods_jan_code, ec_goods.ec_sales_price, ec_goods.goods_img_url, ec_goods.ec_goods_name, ec_goods.goods_id, 
@@ -62,8 +62,8 @@ exports = module.exports = {
                     WHERE t_activity_goods.act_id = ${activityGoods.aid} 
                     AND t_activity_goods.ag_status = 1 
                     AND t_activity_goods.data_status = 1 
-                    AND t_activity_goods.dist_member_id = ${member_id} 
-                    AND ec_goods.member_id = ${member_id} 
+                    AND t_activity_goods.dist_member_id = 101158 
+                    AND ec_goods.member_id = 101158
                     AND ec_goods.goods_status = 1 
                     AND ec_goods.data_status = 1 
                     AND t_goods.goods_status = 1 
@@ -103,17 +103,11 @@ exports = module.exports = {
                      ON eg.goods_id = g.id 
                      LEFT JOIN t_goods_category tgc 
                      ON g.goods_category_id = tgc.id 
-                     WHERE eg.member_id = ${member_id} 
-                     AND g.goods_status = 1 
-                     AND g.data_status = 1 
-                     AND eg.goods_status = 1 
-                     AND eg.data_status = 1 
-                     AND tgc.LEVEL = 1 
-                     AND tgc.data_status = 1 
-                     AND eg.goods_id in (${goods_ids.filter(i => i).join()}) 
+                     WHERE eg.member_id = 101158
                      ORDER BY g.goods_category_id ASC, g.sale_inventory DESC`;
         return db.curd(sql)
             .then(res => {
+                return res;
                 let resMapArray = null;
                 let current_resArray = [];
                 let resChildMapArray = null;

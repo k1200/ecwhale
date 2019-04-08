@@ -9,9 +9,8 @@ const {
     getCategoryController,
     getTelCodeController,
     getImgCodeController,
-    isRegisterController,
-
-    getShopDetailsController } = require('../Controller/utils');
+    isRegisterController } = require('../Controller/utils');
+const { getShopDetailsController } = require("../Controller/shop");
 
 /**
  * 需要登录

@@ -1,6 +1,6 @@
 const db = require('../config/database');
-const { SQL_ERROR } = require('../constUtils');
-const { createError, getDate } = require('../utils');
+const { sqlReturn, sqlReturnError, getDate } = require('../utils');
+const CATEGORY_TABLE = 'k_category';
 
 const FIRST_LEVEL = 0; //一级商品分类
 const SECOND_LEVEL = 1; //二级商品分类
@@ -10,13 +10,10 @@ const SECOND_LEVEL = 1; //二级商品分类
  */
 const getGoodsCategoryList = (level, pid = 0) => {
     // t_goods_category, t_accessory
-    level = level >= 0 ? 'AND t_goods_category.level = ' + level : false;
-    const sql = `SELECT t_goods_category.id, t_goods_category.parent_id, t_goods_category.category_name, t_accessory.accessory_url 
+    level = level >= 0 ? 't_goods_category.level = ' + level : false;
+    const sql = `SELECT t_goods_category.id, t_goods_category.parent_id, t_goods_category.category_name, t_goods_category.data_status
                     FROM t_goods_category 
-                    LEFT JOIN t_accessory 
-                    ON t_goods_category.icon_acc_id = t_accessory.id 
-                    WHERE t_goods_category.data_status = 1 
-                    ${ level ? pid > 0 ? level + 'AND t_goods_category.parent_id = ' + pid : level : '' } 
+                    WHERE ${ level ? pid > 0 ? level + 'AND t_goods_category.parent_id = ' + pid : level : '' } 
                     ORDER BY t_goods_category.sort ASC`;
     return db.curd(sql)
         .then(res => res)
@@ -152,15 +149,14 @@ exports = module.exports = {
         }
     },
 
-
     /**
-     * @desc 获取商城信息
+     * @desc 获取产品分类
      * @returns {promise}
-     */
-    getShopDetailsModel () {
-        const sql = "SELECT * FROM k_shop";
+     * */
+    getCategoryModel () {
+        const sql = `SELECT id, parentId, name FROM ${CATEGORY_TABLE} WHERE status = 1`;
         return db.curd(sql)
-            .then(res => res[0])
-            .catch(error => createError(SQL_ERROR, error));
-    },
+            .then(res => sqlReturn(res))
+            .catch(error => sqlReturnError(error));
+    }
 };
