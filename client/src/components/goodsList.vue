@@ -1,19 +1,19 @@
 <template>
     <div id="goodsList">
         <slot name="goodsList-header"></slot>
-        <div class="goods" v-for="goods in goodsList" :key="goods.goods_id">
+        <div class="goods" v-for="goods in goodsList" :key="goods.id">
             <div class="goods-img">
-                <router-link :to="{ path: `/goodsDetails/${ goods.goods_id}` }">
-                    <img v-if="+goods.sale_inventory === 0" class="position-center stockup" src="../assets/stockup.png" alt="已售罄">
-                    <img class="position-center" :src="goods.goods_img_url" alt="">
+                <router-link :to="{ path: `/goodsDetails/${ goods.id}` }">
+                    <img v-if="+goods.inventory === 0" class="position-center stockup" src="../assets/stockup.png" alt="已售罄">
+                    <img class="position-center" :src="goods.list_images" alt="">
                 </router-link>
             </div>
             <div class="goods-info">
                 <div class="goods-title text-ellipsis">
-                    <router-link :to="{ path: `/goodsDetails/${ goods.goods_id}` }"> {{ goods.ec_goods_name }}</router-link>
+                    <router-link :to="{ path: `/goodsDetails/${ goods.id}` }"> {{ goods.name }}</router-link>
                 </div>
                 <div class="goods-price">
-                    <span class="price"> ¥{{ goods.ec_sales_price }} </span>
+                    <span class="price"> ¥{{ goods.price }} </span>
                     <span class="right deliver-area"> {{ goods.deliver_area == "0" ? "保税区发货" : "日本直邮" }} </span>
                 </div>
                 <button type="button" class="right btn-addcar-goods" @click="addCart(goods)">

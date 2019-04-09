@@ -1,10 +1,10 @@
 <template>
     <div id="login">
         <header class="header main-width ec-color">
-              <span v-if="shopInfo.logo">
+              <router-link tag="span" to="/home" v-if="shopInfo.logo">
                 <img :src="shopInfo.logo">
-              </span>
-            <span class="shop-name" v-else>{{ shopInfo.shop_name }}</span>
+              </router-link>
+            <router-link tag="span" to="/home" class="shop-name" v-else>{{ shopInfo.shop_name }}</router-link>
             <span class="partition">欢迎登录</span>
         </header>
         <article class="article">

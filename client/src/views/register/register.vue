@@ -2,10 +2,10 @@
     <div id="register">
         <header class="header ec-color">
             <div class="main-width">
-                <span v-if="shopInfo.logo">
+                <router-link tag="span" to="/home" v-if="shopInfo.logo">
                     <img :src="shopInfo.logo">
-                </span>
-                <span class="shop-name" v-else>{{ shopInfo.shop_name }}</span>
+                </router-link>
+                <router-link tag="span" to="/home" class="shop-name" v-else>{{ shopInfo.shop_name }}</router-link>
                 <span class="partition">欢迎注册</span>
                 <p class="right"><span style="color: #666">已有账号？ </span> <router-link tag="span" to="/login" replace style="cursor: pointer">去登录<i class="el-icon-sort-down"></i></router-link></p>
             </div>

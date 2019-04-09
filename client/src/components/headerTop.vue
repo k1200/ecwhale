@@ -2,7 +2,7 @@
     <div id="headerTop" v-if="visible">
         <div class="main-width flex-row-between">
             <div>
-                <span>您好 {{ userInfo.name }}，欢迎来到 {{ shopInfo.shop_name }}</span>
+                <span>您好 {{ userInfo.username }}，欢迎来到 {{ shopInfo.shop_name }}</span>
                 <template v-if="login">
                     <button type="button" class="btn-logout hover-cursor" @click="logout"> 【退出】 </button>
                 </template>
@@ -25,11 +25,12 @@
         name: 'headerTop',
         data () {
           return {
-              visible: true
+              visible: true,
+              visibleArray: ['/login', '/register', '/forgetPassword']
           }
         },
         created () {
-            this.visible = !(this.$route.path === '/login' || this.$route.path === '/register');
+            this.visible = !this.visibleArray.includes(this.$route.path);
             // this.getUserInfo();
             this.getShopDetails();
             // this.getShopInfo();
@@ -56,8 +57,7 @@
         },
         watch: {
             '$route' (to, from) {
-                // 对路由变化作出响应...
-                this.visible = !(to.path === '/login');
+                this.visible = !this.visibleArray.includes(to.path);
             }
         }
     };

@@ -15,11 +15,11 @@
             <div class="category">
                 <div class="main-width">
                     <div class="category-item"><router-link tag="span" class="first-category" to="/">首页</router-link></div>
-                    <div class="category-item" v-for="category in categories" :key="category.id">
-                        <router-link tag="span" class="first-category" :to="'/products/' + category.id"> {{ category.category_name }}</router-link>
+                    <div class="category-item" v-for="category in categories" :key="category[0]">
+                        <router-link tag="span" class="first-category" :to="'/products/' + category[0]"> {{ category[1].name }}</router-link>
                         <div class="category-child">
                             <div class="main-width">
-                                <router-link tag="span" v-for="child in category.child" :key="child.id" :to="'/products/' + child.id"> {{ child.category_name }} </router-link>
+                                <router-link tag="span" v-for="child in category[1].child" :key="child[0]" :to="'/products/' + child[0]"> {{ child[1].name }} </router-link>
                             </div>
                         </div>
                     </div>
@@ -41,22 +41,39 @@
             }
         },
         created () {
-            Promise.all([onGetCartList(), this.getCategory()])
-                .then(([cartList]) => {
-                    this.carCount = cartList.length;
-                })
-                .catch(error => console.log(error));
+            if (this.login) {
+                Promise.all([onGetCartList(), this.getCategory()])
+                    .then(([cartList]) => {
+                        this.carCount = cartList.length;
+                    })
+                    .catch(error => console.log(error));
+            } else {
+                this.getCategory()
+            }
         },
         computed: {
             ...mapState([
                 'shopInfo',
-                'categories'
+                'categories',
+                'login'
             ])
+        },
+        mounted () {
+
         },
         methods: {
             ...mapActions([
                 'getCategory'
             ])
+        },
+        watch: {
+            login (newVal) {
+                if (newVal) {
+                    onGetCartList().then(res => {
+                        this.carCount = res.length;
+                    }).catch(error => console.log(error));
+                }
+            }
         }
     };
 </script>

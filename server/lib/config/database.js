@@ -15,8 +15,6 @@ db.connection = () => {
     connection.connect(err => {
         if(err){
             console.log(`mysql连接失败: ${err}!`);
-        }else{
-            console.log('mysql连接成功!');
         }
     });
     return connection;
@@ -26,7 +24,7 @@ db.close = connection => {
     //关闭连接
     connection.end(err => {
         if (err) {
-            return;
+            return false;
         }else{
             console.log('关闭连接');
         }

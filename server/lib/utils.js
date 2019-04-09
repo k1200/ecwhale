@@ -3,6 +3,7 @@ const { ERROR_STATUS, NORMAL_STATUS, SYSERROR, SQL_ERROR } = require("./constUti
 const isObject = params => Object.prototype.toString.call(params) === "[object Object]";
 const isArray = params => Object.prototype.toString.call(params) === "[object Array]";
 const isFun = params => typeof params === 'function';
+const isMap = params => Object.prototype.toString.call(params) === "[object Map]";
 const promiseAll = array => {
     return Promise.all(array)
         .then(res => res)
@@ -90,10 +91,9 @@ const returnRes = (res, result, ...params) => {
             }
         }
     };
-    console.log(result);
     if ((isArray(result) && result[0]) || result) {
         if (params.length === 0 && isArray(result)) {
-            if (isObject(result[1])) {
+            if (isObject(result[1]) || isMap(result[1])) {
                 return res.json(result[1]);
             } else {
                 if (isArray(result[1])) {

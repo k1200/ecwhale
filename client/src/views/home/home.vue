@@ -13,7 +13,7 @@
                 <div class="decorate-side">
                     <div v-if="activityList" class="activity-list">
                         <div class="activity-info">
-                            <p class="activity-title"> {{ activityList.ac_title }} </p>
+                            <p class="activity-title"> {{ activityList.title }} </p>
                             <img src="../../assets/japan.png" width="228" height="157" alt="japan">
                             <p class="activity-time">
                                 <span>{{ activityTime.d }}</span>天<span>{{ activityTime.h }}</span>时<span>{{ activityTime.min }}</span>分<span>{{ activityTime.s }}</span>秒
@@ -22,13 +22,13 @@
                         <div class="activity-goods">
                             <el-carousel class="activity-goods-carousel" indicator-position="outside" arrow="always" :autoplay="false">
                                 <el-carousel-item class="goods-side" v-for="index in activityLoop">
-                                    <router-link :to="'/goodsDetails/' + goods.goods_id" class="goods" v-for="goods in activityList.goodsList.slice(loopStart(index), loopEnd(index))" :key="goods.goods_id">
+                                    <router-link :to="'/goodsDetails/' + goods.id" class="goods" v-for="goods in activityList.goods.slice(loopStart(index), loopEnd(index))" :key="goods.ag_id">
                                         <div class="goods-img">
-                                            <img v-if="+goods.sale_inventory === 0" class="position-center stockup" src="../../assets/stockup.png" alt="已售罄">
-                                            <img :src="goods.goods_img_url" width="100%" height="auto" alt="">
+                                            <img v-if="+goods.inventory === 0" class="position-center stockup" src="../../assets/stockup.png" alt="已售罄">
+                                            <img :src="goods.list_images" width="100%" height="auto" alt="">
                                         </div>
-                                        <div class="goods-title text-ellipsis"> {{ goods.ec_goods_name }} </div>
-                                        <div class="goods-price"> <span> ¥{{ goods.ag_price }} </span> <del> ¥{{ goods.ec_sales_price }} </del> <button type="button" class="right btn-addcar-activity">
+                                        <div class="goods-title text-ellipsis"> {{ goods.name }} </div>
+                                        <div class="goods-price"> <span> ¥{{ goods.ag_price }} </span> <del> ¥{{ goods.price }} </del> <button type="button" class="right btn-addcar-activity">
                                             <img src="../../assets/tocart.png" width="100%" alt=""></button></div>
                                     </router-link>
                                 </el-carousel-item>
@@ -41,19 +41,19 @@
                 </div>
             </div>
         </div>
-        <div class="floor-goods">
-            <div class="floor-goods-list main-width" v-for="goodsList in basicGoods" :key="goodsList.id" v-if="goodsList.allGoods">
+        <div class="floor-goods" v-if="basicGoods">
+            <div class="floor-goods-list main-width" v-for="category in categories" :key="category[0]" v-if="visiblyFloor(category[0])">
                 <div class="category">
-                    <span class="category-title"> {{ goodsList.category_name }} </span>
+                    <span class="category-title"> {{ category[1].name }} </span>
                     <p class="category-child right">
-                        <router-link :to="'/products/' + goodsList.id"> 全部 </router-link>
-                        <router-link v-for="category in goodsList.child" :key="category.id" :to="'/products/' + category.id"> {{ category.category_name }} </router-link>
+                        <router-link :to="'/products/' + category[0]"> 全部 </router-link>
+                        <router-link v-for="child in category[1].child" :key="child[0]" :to="'/products/' + child[0]"> {{ child[1].name }} </router-link>
                     </p>
                 </div>
 
-                <GoodsList :goodsList="goodsList.allGoods" class="goods-groups">
-                    <template #goodsList-header v-if="goodsList.hotGoods">
-                        <router-link tag="div" :to="'/goods/' + goodsList.hotGoods.id" class="hot-goods"> <img :src="goodsList.hotGoods.pc_accessory_url" width="100%" height="283" alt=""> </router-link>
+                <GoodsList :goodsList="basicGoods.get(category[0]).slice(1, 7)" class="goods-groups">
+                    <template #goodsList-header>
+                        <router-link tag="div" :to="'/goods/' + basicGoods.get(category[0])[0].id" class="hot-goods"> <img :src=" basicGoods.get(category[0])[0].list_images" width="100%" height="283" alt=""> </router-link>
                     </template>
                 </GoodsList>
             </div>
@@ -77,6 +77,7 @@
     import GoodsList from '@c/goodsList.vue';
     import { onGetHomeData } from "../../service/getData";
     import { getIntervalTime } from "../../config/utils";
+    import { mapState } from "vuex";
 
     export default {
         name: 'home',
@@ -96,12 +97,14 @@
         },
         created() {
             this.getData();
-
         },
         computed: {
+            ...mapState([
+               'categories'
+            ]),
             activityLoop () {
                 if (this.activityList) {
-                    return Math.ceil(this.activityList.goodsList.length / 4);
+                    return Math.ceil(this.activityList.goods.length / 4);
                 }
             }
         },
@@ -116,9 +119,13 @@
             loopEnd (index) {
                 return +index * 4;
             },
+            visiblyFloor (category) {
+              return !!(this.basicGoods && this.basicGoods.get(category) && this.basicGoods.get(category).length > 0);
+            },
             async getData () {
                 await onGetHomeData().then(res => {
-                    this.basicGoods = res.basicGoodsList;
+                    res.activeGoodsList.goods = res.activeGoodsList.goods.slice(0, 9);
+                    this.basicGoods = new Map(res.basicGoodsList);
                     this.activityList = res.activeGoodsList;
                     this.hotList = res.hotGoodsList;
                     this.likeGoodsList = res.likeGoodsList;
@@ -126,7 +133,7 @@
                 if (!this.activityList) return false;
                 let intervalTime = getIntervalTime((res) => {
                     this.activityTime = res;
-                }, this.activityList.ac_end_time);
+                }, this.activityList.end_time);
                 intervalTime.pending = true;
             }
         }

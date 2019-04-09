@@ -1,77 +1,57 @@
 const db = require('../config/database');
-const { promiseAll } = require('../utils');
-const { getGoodsCategoryListByMid, getOnlineActivityGoodsByAids } = require('./utils');
+const { SQL_ERROR } = require('../constUtils');
+const { promiseAll, getMysqlDate, sqlReturn, sqlReturnError, isArray } = require('../utils');
+const { getCategoryModel } = require('./utils');
+const ACTIVITY_TABLE = 'k_activity';
+const ACTIVITYGOODS_TABLE = 'k_activity_goods';
+const GOODS_TABLE = 'k_goods';
+const CATEGORY_TABLE = 'k_category';
 
 const TYPE_HOT = 1; // 爆款
 const TYPE_FLOOR = 2; // 楼层
 
-const getActivity = (member_id) => {
-    // table t_activity, t_accessory
-    const nowDate = new Date('2019-01-31 23:59:59');
-    const date = `${nowDate.getFullYear()}-${nowDate.getMonth() + 1}-${nowDate.getDate()}`;
-    const sql = `SELECT activity.id AS aid , activity.ac_begin_time, activity.ac_end_time, accessory.accessory_url, activity.ac_title  
-                    FROM t_activity activity 
-                    LEFT JOIN t_accessory accessory 
-                    ON activity.ac_bg_img_id = accessory.id 
-                    WHERE activity.ac_status = 1 
-                    AND activity.data_status = 1 
-                    AND activity.ac_type = 6 
-                    AND activity.dist_member_id = ? 
-                    AND activity.ac_begin_time <= '${date}' 
-                    AND activity.ac_end_time >= '${date}' 
-                    ORDER BY activity.ac_sort ASC`;
-    return db.curd(sql, [101158])
-        .then(res => res[0])
-        .catch(err => err);
+/**
+ * @desc 获取活动对象
+ * @table ACTIVITY_TABLE
+ * @param {number} [type=2] 活动类型
+ * @return {object} promise
+ * */
+const getActiyityModel = (type = 2) => {
+    const sql = `SELECT ac.id AS aid, ac.start_time, ac.end_time, ac.title  
+                FROM ${ACTIVITY_TABLE} ac 
+                WHERE ac.start_time <= '${getMysqlDate()}' 
+                AND ac.end_time >= '${getMysqlDate()}'
+                AND ac.status = 1 
+                AND ac.type = ${type}`;
+    return db.curd(sql).then(res => sqlReturn(res))
+        .catch(error => sqlReturnError(error));
 };
-const getHotGoodsByFoolr = () => {
-    // table t_shop_index_set, t_accessory
-    const sql = `SELECT t_shop_index_set.goods_id, t_shop_index_set.goods_category_id, t_shop_index_set.goods_ids, t1.accessory_url as pc_accessory_url, t2.accessory_url as mobile_accessory_url 
-                    FROM t_shop_index_set 
-                    LEFT JOIN t_accessory AS t1
-                    ON t_shop_index_set.pc_ad_img_id = t1.id 
-                    LEFT JOIN t_accessory as t2
-                    ON t_shop_index_set.mobile_ad_img_id = t2.id
-                    WHERE t_shop_index_set.type = ${TYPE_FLOOR} 
-                    AND t_shop_index_set.data_status = 1`;
-    return db.curd(sql)
-        .then(res => {
-            const goods_ids = res.map(item => item.goods_ids);
-            const hotGoodsByFoolrMap = new Map(res.map(item => [item.goods_category_id, item]));
-            return { goods_ids, hotGoodsByFoolrMap};
-        })
-        .catch(err => err);
-};
+
 exports = module.exports = {
-    /*
-    * @params member_id
-    * @return result 查询结果
-    *
-    * */
-    async activeGoods (member_id) {
-        let activityGoods = await getActivity(101158);
-        console.log(activityGoods);
-        if (!activityGoods) return null;
-        const sql = `SELECT ec_goods.id AS ec_gid, ec_goods.goods_jan_code, ec_goods.ec_sales_price, ec_goods.goods_img_url, ec_goods.ec_goods_name, ec_goods.goods_id, 
-                    t_activity_goods.ag_salenum, t_activity_goods.ag_price, t_activity_goods.ag_inventory, t_goods.sale_inventory, t_goods.deliver_area 
-                    FROM ec_goods 
-                    JOIN t_activity_goods 
-                    ON t_activity_goods.ec_ag_goods_id = ec_goods.id 
-                    LEFT JOIN t_goods 
-                    ON ec_goods.goods_id = t_goods.id 
-                    WHERE t_activity_goods.act_id = ${activityGoods.aid} 
-                    AND t_activity_goods.ag_status = 1 
-                    AND t_activity_goods.data_status = 1 
-                    AND t_activity_goods.dist_member_id = 101158 
-                    AND ec_goods.member_id = 101158
-                    AND ec_goods.goods_status = 1 
-                    AND ec_goods.data_status = 1 
-                    AND t_goods.goods_status = 1 
-                    AND t_goods.data_status = 1`;
-        return db.curd(sql)
-            .then(res => (activityGoods.goodsList = res, activityGoods))
-            .catch(err => (console.log(err), err));
+    /**
+     * @desc 获取活动商品
+     * @table ACTIVITYGOODS_TABLE GOODS_TABLE
+     * @return {object} promise 包含商品的活动对象
+     * */
+    async getActiyityGoodsModel () {
+        let activity = await getActiyityModel();
+        if (!activity[0] || (activity[0] && activity[1].length === 0)) {
+            activity[0] && (activity[1] = null);
+            return activity;
+        }
+        activity = activity[1][0];
+        const sql = `SELECT g.*, ag.id AS ag_id, ag.price AS ag_price, ag.sales AS ag_sales, ag.inventory AS ag_count, ag.limit AS ag_limit
+                    FROM ${ACTIVITYGOODS_TABLE} ag 
+                    JOIN ${GOODS_TABLE} g 
+                    ON ag.g_id = g.id 
+                    WHERE ag.aid = ${activity.aid} 
+                    AND g.status = 1`;
+        return db.curd(sql).then(res => {
+            activity.goods = res;
+            return sqlReturn(activity);
+        }).catch(error => sqlReturnError(error));
     },
+
     hotGoods () {
         // table t_shop_index_set, t_accessory
         const sql = `SELECT t_shop_index_set.goods_id, t1.accessory_url as pc_accessory_url, t2.accessory_url as mobile_accessory_url 
@@ -84,89 +64,57 @@ exports = module.exports = {
                     AND t_shop_index_set.data_status = 1
                     ORDER BY t_shop_index_set.sort ASC`;
         return db.curd(sql)
-            .then(res => res)
-            .catch(err => (console.log(err), err));
+            .then(res => sqlReturn(res))
+            .catch(error => sqlReturnError(error));
     },
     /*
     * @params member_id
     * @return result 查询结果
     *
     * */
-    async basicGoods (member_id) {
-        // const onlineActivityGoods = await getOnlineActivityGoodsByAids(member_id);
-        const [foolrHotGoods, goodsCategoryList] = await promiseAll([getHotGoodsByFoolr(), getGoodsCategoryListByMid()]);
-        const goods_ids = foolrHotGoods.goods_ids;
-        const foolrHotGoods_map = foolrHotGoods.hotGoodsByFoolrMap;
-        const sql = `SELECT eg.*, g.sale_inventory, g.deliver_area, g.goods_category_id, tgc.parent_id 
-                     FROM ec_goods eg 
-                     LEFT JOIN t_goods g 
-                     ON eg.goods_id = g.id 
-                     LEFT JOIN t_goods_category tgc 
-                     ON g.goods_category_id = tgc.id 
-                     WHERE eg.member_id = 101158
-                     ORDER BY g.goods_category_id ASC, g.sale_inventory DESC`;
+    async basicGoods () {
+        const sql = `SELECT g.*, category.parentId AS parent_id 
+                     FROM ${GOODS_TABLE} g 
+                     LEFT JOIN t_goods tg
+                     ON tg.id = g.goods_id 
+                     LEFT JOIN ${CATEGORY_TABLE} category
+                     ON tg.goods_category_id = category.id 
+                     WHERE g.status = 1 
+                     AND category.status = 1 
+                     AND tg.goods_status = 1 
+                     AND tg.data_status = 1
+                     ORDER BY g.category ASC, g.sales DESC`;
         return db.curd(sql)
             .then(res => {
-                return res;
-                let resMapArray = null;
-                let current_resArray = [];
-                let resChildMapArray = null;
-                let current_resChildArray = [];
-
+                let resMapArray = new Map();
+                let current_resArray = null;
                 for (let [index, item] of res.entries()) {
-
-                    if (resMapArray && item.parent_id === resMapArray[0]) {
-                        resMapArray[1].push(item);
+                    if (resMapArray.get(item.parent_id)) {
+                        resMapArray.get(item.parent_id).push(item)
                     } else {
-                        resMapArray && current_resArray.push(resMapArray);
-                        resMapArray = [item.parent_id, [item]];
-                    }
-
-                    if (resChildMapArray && item.goods_category_id === resChildMapArray[0]) {
-                        resChildMapArray[1].push(item);
-                    } else {
-                        resChildMapArray && current_resChildArray.push(resChildMapArray);
-                        resChildMapArray = [item.goods_category_id, [item]];
+                        current_resArray = [item];
+                        resMapArray.set(item.parent_id, current_resArray)
                     }
 
                     if (index === res.length - 1) {
-                        resMapArray && current_resArray.push(resMapArray);
-                        resChildMapArray && current_resChildArray.push(resChildMapArray);
-                        resMapArray = resChildMapArray = null;
+                        current_resArray = null;
                     }
                 }
-                const res_map = new Map(current_resArray);
-                const resChild_map = new Map(current_resChildArray);
-
-                for (let item of goodsCategoryList) {
-                    item.hotGoods = foolrHotGoods_map.get(item.id);
-                    item.allGoods = res_map.get(item.id);
-                    for (let child_item of item.child) {
-                        child_item.goodsList = resChild_map.get(child_item.id);
-                    }
-                }
-                return goodsCategoryList;
+                return sqlReturn([...resMapArray]);
             })
-            .catch(err => (console.log(err), err));
+            .catch(error => sqlReturnError(error));
     },
-    likeGoods (member_id) {
-        const sql = `SELECT eg.*, g.sale_inventory, g.deliver_area, g.goods_category_id, tgc.parent_id 
-                     FROM ec_goods eg 
-                     LEFT JOIN t_goods g 
-                     ON eg.goods_id = g.id 
-                     LEFT JOIN t_goods_category tgc 
-                     ON g.goods_category_id = tgc.id 
-                     WHERE eg.member_id = ${member_id} 
-                     AND g.goods_status = 1 
-                     AND g.data_status = 1 
-                     AND eg.goods_status = 1 
-                     AND eg.data_status = 1 
-                     AND tgc.LEVEL = 1 
-                     AND tgc.data_status = 1 
-                     ORDER BY g.goods_salenum DESC 
+
+    likeGoods () {
+        const sql = `SELECT g.*, category.parentId AS parent_id 
+                     FROM ${GOODS_TABLE} g 
+                     LEFT JOIN ${CATEGORY_TABLE} category
+                     ON g.category = category.id 
+                     WHERE g.status = 1 
+                     ORDER BY g.category ASC, g.sales DESC 
                      LIMIT 8`;
         return db.curd(sql)
-            .then(res => res)
-            .catch(err => (console.log(err), err));
+            .then(res => sqlReturn(res))
+            .catch(error => sqlReturnError(error));
     }
 };
