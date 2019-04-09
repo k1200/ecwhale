@@ -71,7 +71,7 @@
                     </el-form-item>
                     <el-form-item>
                         <div class="flex-row-between">
-                            <router-link to="/" style="color: #666">忘记密码</router-link>
+                            <router-link to="/forgetPassword" style="color: #666">忘记密码</router-link>
                             <router-link class="ec-link" to="/register">立即注册»</router-link>
                         </div>
                     </el-form-item>

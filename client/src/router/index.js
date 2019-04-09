@@ -6,6 +6,7 @@ Vue.use(Router);
 
 const login = () => import(/* webpackChunkName: "login" */ '@views/login/login.vue');
 const register = () => import(/* webpackChunkName: "register" */ '@views/register/register.vue');
+const forgetPassword = () => import(/* webpackChunkName: "forgetPassword" */ '@views/forgetPassword/forgetPassword.vue');
 const home = () => import(/* webpackChunkName: "home" */ '@views/home/home.vue');
 const products = () => import(/* webpackChunkName: "products" */ '@views/products/products.vue');
 const goodsDetails = () => import(/* webpackChunkName: "goodsDetails" */ '@views/goodsDetails/goodsDetails.vue');
@@ -46,6 +47,14 @@ const routes = [{
             meta: {
                 title: '注册'
             }
+        },
+        // 忘记密码
+        {
+          path: '/forgetPassword',
+          component: forgetPassword,
+          meta: {
+              title: '忘记密码'
+          }
         },
         // 产品列表
         {
