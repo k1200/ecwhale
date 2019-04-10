@@ -1,15 +1,14 @@
 import axios from './index';
 import { getStore } from '../config/utils'
-
-/**
- * 获取当前门店信息
- * */
-export const onGetShopInfo = () => axios('getShopInfo');
-
 /**
  * 登录
  * */
 export const onLogin = params => axios('login', params, 'post');
+
+/**
+ * 找回密码
+ * */
+export const onForgetPassword = params => axios('forgetPassword', params, 'post');
 
 /**
  * 获取用户信息

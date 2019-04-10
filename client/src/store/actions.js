@@ -1,5 +1,4 @@
 import {
-    onGetShopInfo,
     onGetShopDetails,
     onGetUser,
     onGetCategory

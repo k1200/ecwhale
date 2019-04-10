@@ -11,7 +11,7 @@
             <div class="popvoer-body">
                 <slot></slot>
             </div>
-            <div class="popvoer-btns">
+            <div v-if="visiblyBtns" class="popvoer-btns">
                 <button type="button" class="btn-confirm" @click="confirm">{{ confirmTxt }}</button>
                 <button v-if="visiblyCancel" type="button" class="btn-cancel" @click="cancel">{{ cancelTxt }}</button>
             </div>
@@ -40,7 +40,7 @@
             }
         },
         watch: {
-            visiblyCancel (newVal, oldVal) {
+            visiblyPopover (newVal, oldVal) {
                 if (typeof newVal === 'boolean') {
                     newVal ? this.$emit('visibly') : this.$emit('close');
                 }
@@ -52,6 +52,10 @@
                 default: false
             },
             visiblyCancel: {
+                type: Boolean,
+                default: true
+            },
+            visiblyBtns: {
                 type: Boolean,
                 default: true
             },

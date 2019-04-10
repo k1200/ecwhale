@@ -205,13 +205,14 @@
     };
 </script>
 
-<style>
-    .login-input input {
-        border-radius: 20px;
-    }
-
-    .login-input .el-form-item__error {
-        padding-left: 30px;
+<style lang="scss">
+    .login-input {
+        input {
+            border-radius: 20px;
+        }
+        .el-form-item__error {
+            padding-left: 30px;
+        }
     }
 </style>
 <style lang="scss" scoped>
