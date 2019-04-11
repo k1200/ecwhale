@@ -30,7 +30,7 @@ export const removeStore = name => {
  * */
 export const getDateTimestamp = (time = new Date()) => {
     if (typeof time === 'number' || typeof time === 'string' || time instanceof Date) {
-        return new Date(time).getTime();
+        return new Date(time).getMilliseconds();
     } else {
         return NaN;
     }

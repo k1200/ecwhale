@@ -1,17 +1,19 @@
 <template>
     <el-row class="header" type="flex" justify="space-between">
-        <el-col :span="4">
+        <el-col :span="4" style="width: 200px">
             <div class="title-content"> {{ admin.name || 'xxx后台管理' }} </div>
         </el-col>
         <el-col :span="14">
-            <div class="notification-content">
+            <div class="notification-content" ref="notificationContent">
                 <div class="notification-list">
-                    <div :style="animation" ref="notification">
-                        <p class="notification">Notification 提供设置偏移量的功能</p>
-                        <p class="notification">通过设置 offset 字段，可以使弹出的消息</p>
-                        <p class="notification">距屏幕边缘偏移一段距离。注意在同一时刻，所有的 Notification 实例应当具有一个</p>
-                        <p class="notification">相同的偏移量</p>
-                        <p class="notification">Notification 提供设置偏移量的功能，通过设置 offset 字段</p>
+                    <div class="notification-animation" :style="animation" ref="notification">
+                        <div v-for="notification in notifications">
+                            <router-link tag="p"
+                                         v-for="(item, index) in notification"
+                                         class="notification text-ellipsis pointer" to="/">
+                                <span>{{ index + 1 }}、{{ item }}</span>
+                            </router-link>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -35,7 +37,7 @@
 </template>
 
 <script>
-    import { getTimeInfo, getStyle } from "@/config/utils";
+    import { getDateTime, getStyle } from "@/config/utils";
 
     export default {
         name: 'pageHeader',
@@ -46,6 +48,15 @@
                     user: {username: '壹壹仟壹仟贰'}
                 },
                 greetings: '',
+                notifications: [
+                    [
+                        'Notification 提供设置偏移量的功能',
+                        '通过设置 offset 字段，可以使弹出的消息',
+                        '距屏幕边缘偏移一段距离。注意在同一时刻，所有的 Notification 实例应当具有一个',
+                        '相同的偏移量',
+                        'Notification 提供设置偏移量的功能，通过设置 offset 字段'
+                    ]
+                ],
                 animation: null
             }
         },
@@ -60,7 +71,7 @@
         },
         methods: {
             getGreetings () {
-                let date = getTimeInfo();
+                let date = getDateTime();
                 let h = parseInt(date.h);
                 if (h < 9) {
                     return '早上好！';
@@ -75,8 +86,12 @@
                 }
             },
             setAnimation () {
+                let minHeight = parseInt(this.$refs.notificationContent.offsetHeight);
                 let time = parseInt(this.$refs.notification.offsetHeight);
-                this.animation = { animation: `notification ${time / 20}s linear infinite` }
+                if (minHeight < time) {
+                    this.notifications = [this.notifications[0], this.notifications[0]];
+                    this.animation = { animation: `notification ${time / 20}s linear infinite` }
+                }
             }
         }
     };
@@ -85,7 +100,7 @@
 <style lang="scss">
     @keyframes notification {
         from { transform: translateY(0%) }
-        to { transform: translateY(-100%) }
+        to { transform: translateY(-50%) }
     }
 </style>
 <style scoped lang="scss">
@@ -93,7 +108,6 @@
     .header {
         background-color: $color;
         margin: 0 -20px;
-        padding: 0 0 0 20px;
         color: #fff;
         height: 100%;
         line-height: 60px;
@@ -127,6 +141,9 @@
         .notification-list {
             height: 100%;
             overflow: hidden;
+            &:hover .notification-animation {
+                animation-play-state: paused !important;
+            }
         }
         .notification {
             margin: 0;

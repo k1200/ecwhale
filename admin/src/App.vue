@@ -24,6 +24,15 @@
         }
     }
 </script>
-<style lang="scss" scoped>
-
+<style lang="scss">
+    @import "style/common";
+    #app, .el-container {
+        height: 100%;
+    }
+    .el-main {
+        padding-left: 60px !important;
+    }
+    .el-footer {
+        height: auto !important;
+    }
 </style>
