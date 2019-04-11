@@ -1,0 +1,6 @@
+/.idea
+/server/node_modules
+/client/node_modules
+/admin/node_modules
+/server/sessions
+/server/access

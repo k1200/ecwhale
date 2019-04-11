@@ -1,14 +1,20 @@
 <template>
     <div id="app" class="min-width">
-        <router-view name="header"/>
-        <router-view name="default"/>
-        <router-view name="footer"/>
+        <Header/>
+        <router-view/>
+        <Footer/>
     </div>
 </template>
 
 <script>
+    import Header from "./components/headerTop";
+    import Footer from "./components/footerMin";
     export default {
-        name: 'app'
+        name: 'app',
+        components: {
+            Header,
+            Footer
+        }
     };
 </script>
 

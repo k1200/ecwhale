@@ -1,0 +1,126 @@
+@import "./variate.scss";
+body, div, header, footer, nav, section, aside, article, ul, dl, dt, dd, li, p, h1, h2, h3, h4, h5, h6, form, textarea, input, select, figure, figcaption, span, a, button {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  font-style: normal;
+  text-decoration: none;
+  box-sizing: border-box;
+  border: none;
+  font-weight: normal;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  background: none;
+  outline: none
+}
+
+html, body {
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+  position: relative;
+  font-size: 14px;
+}
+a:hover, button:hover {
+  outline: none;
+  cursor: pointer;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.clear:after {
+  content: '';
+  display: block;
+  clear: both
+}
+
+.clear {
+  zoom: 1;
+}
+
+.margin {
+  margin: 0 auto
+}
+
+.left {
+  float: left
+}
+
+.right {
+  float: right
+}
+
+.hide {
+  display: none
+}
+
+.show {
+  display: block
+}
+
+.flex-box {
+  display: flex
+}
+
+.flex-row-center {
+  @extend .flex-box;
+  justify-content: center
+}
+
+.flex-row-between {
+  @extend .flex-box;
+  justify-content: space-between
+}
+
+.flex-row-around {
+  @extend .flex-box;
+  justify-content: space-around
+}
+
+.flex-col-center {
+  @extend .flex-box;
+  align-content: center
+}
+
+.flex-col-between {
+  @extend .flex-box;
+  align-content: space-between
+}
+
+.flex-col-around {
+  @extend .flex-box;
+  align-content: space-around
+}
+
+.flex-center {
+  @extend .flex-row-center;
+  @extend .flex-col-center
+}
+
+.position-center {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+/* 超出文本省略 */
+.text-ellipsis { // 单行
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.text-ellipsis-2 { // 两行
+  @extend .text-ellipsis;
+  display: -webkit-box;
+  white-space: normal !important;
+  word-wrap: break-word;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

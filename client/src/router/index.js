@@ -11,25 +11,15 @@ const home = () => import(/* webpackChunkName: "home" */ '@views/home/home.vue')
 const products = () => import(/* webpackChunkName: "products" */ '@views/products/products.vue');
 const goodsDetails = () => import(/* webpackChunkName: "goodsDetails" */ '@views/goodsDetails/goodsDetails.vue');
 
-const header = () => import(/* webpackChunkName: "header" */ '@c/headerTop.vue');
-const footer = () => import(/* webpackChunkName: "footer" */ '@c/footerMin.vue')
-
-const routes = [{
-    path: '/',
-    components: {
-        default: App,
-        header: header,
-        footer: footer
-    }, //顶层路由，对应index.html
-    children: [ //二级路由。对应App.vue
-        //地址为空时跳转home页面
+const routes = [ // 二级路由。对应App.vue
+        // 地址为空时跳转home页面
         {
             path: '',
             redirect: '/home'
         },
         // 首页
         {
-            path: 'home',
+            path: '/home',
             component: home
         },
         //登录页
@@ -70,8 +60,7 @@ const routes = [{
             component: goodsDetails,
             name: 'goodsDetails'
         }
-    ]
-}];
+    ];
 
 const router = new Router({
     routes,
