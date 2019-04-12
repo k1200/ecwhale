@@ -37,7 +37,7 @@
 </template>
 
 <script>
-    import { getDateTime, getStyle } from "@/config/utils";
+    import { getDateTime } from "@/config/utils";
 
     export default {
         name: 'pageHeader',
