@@ -101,7 +101,13 @@
 </script>
 
 <style scoped lang="scss">
-    .aside, .el-menu {
-        height: 100%;
+    .aside {
+        min-height: 100%;
+        border-right: 1px solid #eee;
     }
+    .el-menu {
+        height: 100%;
+        border: none;
+    }
+
 </style>
