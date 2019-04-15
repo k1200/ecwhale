@@ -12,6 +12,8 @@ const klogger = require("koa-logger"); // 日志
 const path = require('path');
 const fs = require('fs');
 
+const router = require("./Routes/index");
+
 const app = new Koa();
 
 app.keys = ['some secret hurr'];
@@ -35,6 +37,8 @@ app.use(ksession(CONFIG, app));
 app.use(khelmet());
 app.use(kbodyparser());
 app.use(klogger());
+
+app.use(router);
 
 app.use(async ctx => {
     ctx.body = 'Hello World';

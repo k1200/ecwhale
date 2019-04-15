@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "openserver": "node ./server/server --open"
+    "openserver": "node ./server/server.js --open"
   },
   "dependencies": {
     "axios": "^0.18.0",
