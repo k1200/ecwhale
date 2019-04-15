@@ -13,19 +13,21 @@
         </el-form-item>
         <el-form-item label="商品类型：" prop="category">
             <el-cascader :options="category"
-                         v-model="selectedCategory"
-                         @change="handleChange"
+                         v-model="goodsDetails.category"
+                         @change="categoryChange"
                          placeholder="请选择商品类型"
-                         filterable>
+                         filterable
+                         change-on-select>
             </el-cascader>
-            <el-button type="primary" @click="addCategory">添加类型</el-button>
         </el-form-item>
         <el-form-item label="商品品牌：" prop="brand">
-            <el-select v-model="goodsDetails.brand" placeholder="请选择商品品牌">
-                <el-option label="品牌一" value="shanghai"></el-option>
-                <el-option label="品牌二" value="beijing"></el-option>
+            <el-select v-model="goodsDetails.brand"
+                       filterable
+                       allow-create
+                       default-first-option
+                       placeholder="请选择商品品牌">
+                <!--<el-option label="品牌一" value="shanghai"></el-option>-->
             </el-select>
-            <el-button type="primary" @click="addBrand">添加品牌</el-button>
         </el-form-item>
         <el-form-item label="商品价格：" prop="price">
             <el-input v-model="goodsDetails.price" placeholder="请输入商品价格"></el-input>
@@ -37,17 +39,17 @@
             <el-input type="number" v-model="goodsDetails.limit" placeholder="请输入商品限购数量"></el-input>
         </el-form-item>
 
-        <el-form-item label="商品列表图：">
+        <el-form-item label="商品列表图：" prop="listImages">
             <el-upload
                     action="https://jsonplaceholder.typicode.com/posts/"
                     list-type="picture-card"
                     accept="image/*"
                     :limit="1"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload"
-                    :on-preview="handlePictureCardPreview"
-                    :on-remove="handleRemove"
-                    :on-exceed="handleLimit(1)">
+                    :on-exceed="pictureLimit(1)"
+                    :before-upload="beforeUpload"
+                    :on-success="uploadSuccess"
+                    :on-preview="picturePreview"
+                    :on-remove="pictureRemove">
                 <i class="el-icon-plus"></i>
                 <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
@@ -55,20 +57,22 @@
                 <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
         </el-form-item>
-        <el-form-item label="商品Banner图(PC)：">
+        <el-form-item label="商品Banner图(PC)：" prop="bannerList_pc">
             <el-upload
                     class="upload-demo upload-demo-pc"
                     ref="upload_pc"
                     action="https://jsonplaceholder.typicode.com/posts/"
                     multiple
-                    :limit="5"
                     accept="image/*"
-                    :on-preview="handlePreview"
-                    :on-remove="handleRemove"
                     list-type="picture-card"
                     :file-list="fileList_pc"
                     :auto-upload="false"
-                    :on-exceed="handleLimit(5)">
+                    :limit="5"
+                    :on-exceed="pictureLimit(5)"
+                    :before-upload="beforeUpload"
+                    :on-success="uploadSuccess"
+                    :on-preview="picturePreview"
+                    :on-remove="pictureRemove">
                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                 <el-button class="btn-submit-files" size="small" type="success" @click="submitUpload('pc')">上传到服务器</el-button>
                 <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
@@ -77,20 +81,22 @@
                 <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
         </el-form-item>
-        <el-form-item label="商品Banner图(WAP)：">
+        <el-form-item label="商品Banner图(WAP)：" prop="bannerList_wap">
             <el-upload
                     class="upload-demo upload-demo-wap"
                     ref="upload_wap"
                     action="https://jsonplaceholder.typicode.com/posts/"
                     multiple
-                    :limit="5"
-                    accept="image/*"
-                    :on-preview="handlePreview"
-                    :on-remove="handleRemove"
                     list-type="picture-card"
                     :file-list="fileList_wap"
                     :auto-upload="false"
-                    :on-exceed="handleLimit(5)">
+                    accept="image/*"
+                    :limit="5"
+                    :on-exceed="pictureLimit(5)"
+                    :before-upload="beforeUpload"
+                    :on-success="uploadSuccess"
+                    :on-preview="picturePreview"
+                    :on-remove="pictureRemove">
                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                 <el-button  class="btn-submit-files" size="small" type="success" @click="submitUpload('wap')">上传到服务器</el-button>
                 <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
@@ -104,8 +110,8 @@
             <el-input type="textarea" v-model="goodsDetails.remark" placeholder="请输入商品备注"></el-input>
         </el-form-item>
 
-        <el-form-item label="商品详情：">
-            <UEditor></UEditor>
+        <el-form-item label="商品详情：" prop="details">
+            <UEditor style="line-height: initial"></UEditor>
         </el-form-item>
 
         <el-form-item>
@@ -118,60 +124,74 @@
 
 <script>
     import UEditor from "../../../components/ueditor";
+    import { isPrice } from "../../../config/utils";
+
     export default {
         name: 'basicAttr',
         data() {
+            let regPrice = (rule, value, callback) => {
+                if (!isPrice(value)) {
+                    callback(new Error('价格格式错误'));
+                } else {
+                    callback();
+                }
+            };
+            let rules = {
+                name: [
+                    { required: true, message: '请输入商品名称', trigger: 'blur' },
+                    { min: 5, max: 25, message: '长度在 5 到 25 个字符', trigger: 'blur' }
+                ],
+                desc: [
+                    { required: true, message: '请输入商品简介', trigger: 'blur' }
+                ],
+                category: [
+                    { required: true, message: '请选择商品类型', trigger: 'change' }
+                ],
+                brand: [
+                    { required: true, message: '请选择商品品牌', trigger: 'change' }
+                ],
+                price: [
+                    { required: true, message: '请输入商品价格', trigger: 'blur' },
+                    { validator: regPrice, trigger: 'blur' }
+                ],
+                vipPrice: [
+                    { required: true, message: '请输入商品VIP价', trigger: 'blur' },
+                    { validator: regPrice, trigger: 'blur' }
+                ],
+                listImages: [
+                    { required: true, message: '请上传列表图片', trigger: 'blur' },
+                ],
+                bannerList_pc: [
+                    { required: true, message: '请上传banner列表（PC）', trigger: 'blur' },
+                ],
+                bannerList_wap: [
+                    { required: true, message: '请上传banner列表（WAP）', trigger: 'blur' },
+                ],
+                details: [
+                    { required: true, message: '请填写商品详情', trigger: 'blur' },
+                ]
+            };
             return {
+                rules,
                 goodsDetails: {
                     name: '',
                     desc: '',
-                    category: '',
+                    category: [],
                     brand: '',
                     price: '',
                     vipPrice: '',
-
+                    listImages: '',
+                    bannerList_pc: '',
+                    bannerList_wap: '',
                     limit: '',
-                    remark: ''
+                    remark: '',
+                    details: ''
                 },
+                category: [{value: '', label: '添加父类'}],
                 dialogImageUrl: '',
                 dialogVisible: false,
                 fileList_pc: [],
                 fileList_wap: [],
-                rules: {
-                    name: [
-                        { required: true, message: '请输入商品名称', trigger: 'blur' },
-                        { min: 5, max: 25, message: '长度在 5 到 25 个字符', trigger: 'blur' }
-                    ],
-                    desc: [
-                        { required: true, message: '请输入商品简介', trigger: 'blur' }
-                    ],
-                    category: [
-                        { required: true, message: '请选择商品类型', trigger: 'change' }
-                    ],
-                    brand: [
-                        { required: true, message: '请选择商品品牌', trigger: 'change' }
-                    ],
-                    price: [
-                        { required: true, message: '请输入商品价格', trigger: 'blur' }
-                    ],
-                    vipPrice: [
-                        { required: true, message: '请输入商品VIP价', trigger: 'blur' }
-                    ]
-                },
-                category: [
-                    {value: '1', label: '香港直邮', children: [
-                        { value: '1-1', label: '香港直邮1' },
-                        { value: '1-2', label: '香港直邮2' },
-                        {value: '', label: '添加子类'}
-                    ]},
-                    {value: '2', label: '保税区发货', children: [
-                        {value: '2-1', label: '保税区发货1'},
-                        {value: '2-2', label: '保税区发货2'},
-                        {value: '', label: '添加子类'}
-                    ]},
-                    {value: '', label: '添加父类'}
-                ],
-                selectedCategory: [],
             };
         },
         components:{
@@ -188,20 +208,16 @@
                     }
                 });
             },
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
-            },
-            handleChange(value) {
-                console.log(value);
+
+            categoryChange (value) {
                 if (!value[0] || (value.length === 2 && !value[1])) {
                     this.addCategory();
-                    this.selectedCategory = this.selectedCategory;
+                    this.goodsDetails.category = this.goodsDetails.category || [];
                     return false;
                 }
-                console.log(value);
             },
 
-            beforeAvatarUpload(file) { // 限制图片格式、大小
+            beforeUpload(file) { // 限制图片格式、大小
                 const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 2;
 
@@ -213,50 +229,69 @@
                 }
                 return isJPG && isLt2M;
             },
-
-            handleAvatarSuccess (res, file) {
+            uploadSuccess (res, file) {
                 console.log(res, file);
             },
-            handleRemove(file, fileList) {
+            pictureRemove (file, fileList) {
                 console.log(file, fileList);
             },
-            handlePictureCardPreview(file) {
+            picturePreview (file) {
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
+            },
+            pictureLimit (files, fileList, limit) {
+                // console.log(files, fileList, limit);
+            },
+
+            updateCategory () {
+                let [$this, parentId, title, $category] = [this, this.goodsDetails.category[0]];
+                if (parentId) {
+                    title = '请输入子分类';
+                    for (let item of this.category) {
+                        if (+item.value === +parentId) {
+                            $category = item.children;
+                            break;
+                        }
+                    }
+                } else {
+                    title = '请输入父级分类';
+                    $category = this.category;
+                }
+
+                return {
+                    title,
+                    update (value, label) {
+                        console.log(parentId);
+                        let newCategory = { value, label };
+                        !parentId && (newCategory.children = [{value: '', label: '添加子类'}]);
+                        $category.splice($this.category.length - 1, 0, newCategory);
+                        $this.category = $category;
+                        $this.goodsDetails.category = !parentId ? [value] : [parentId, value];
+                    }
+                }
+            },
+            addCategory () {
+                let updateCategory = this.updateCategory();
+                this.$prompt(updateCategory.title, '增加分类', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消'
+                }).then(({ value }) => {
+                    updateCategory.update(3 ,value)
+                }).catch(() => {
+                    this.selectedCategory = [];
+                });
+            },
+
+            addBrand () {
+
             },
 
             submitUpload(screen) {
                 this.$refs[`upload_${screen}`].submit();
             },
-            handlePreview(file) {
-                console.log(file);
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
             },
-            handleLimit(files, fileList, limit) {
-                // console.log(files, fileList, limit);
-            },
-            addCategory () {
-                this.$prompt('请输入父级分类', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消'
-                }).then(({ value }) => {
-                    let category = this.category;
-                    category.splice(category.length - 1, 0, {
-                        value: '3',
-                        label: value,
-                        children: [{value: '', label: '添加子类'}]
-                    });
-                    this.category = category;
-                    this.selectedCategory = ['3'];
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '取消输入'
-                    });
-                });
-            },
-            addBrand () {
-
-            }
         }
     };
 </script>

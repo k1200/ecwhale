@@ -29,9 +29,9 @@ app.use(session({
     resave: false, // 强制更新 session
     saveUninitialized: false, // 设置为 false，强制创建一个 session，即使用户未登录
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 // 过期时间，过期后 cookie 中的 session id 自动删除
+        maxAge: 1000 * 60 * 60 * 24 // 设置 cookie 过期时间，过期后 cookie 中的 session id 自动删除
     },
-    store: new fileStore()
+    store: new fileStore() // 持久化存储session
 }));
 app.use(function(req, res, next) {
     // res.header('Access-Control-Allow-Origin', 'http://1200.ecwhale.com'); //先允许跨域请求才能进来

@@ -205,7 +205,7 @@ export const isNumber = (numberString) => {
 /**
  * 是否为整数
  * */
-export const isInteger = (intString) => {
+export const isInteger = intString => {
     let pattern = /^[-+]?\d*$/;
     return pattern.test(intString)
 };
@@ -213,7 +213,7 @@ export const isInteger = (intString) => {
 /**
  * 是否为纯英文字符串
  * */
-export const isEnglishLetter = (letterString) => {
+export const isEnglishLetter = letterString => {
     let pattern = /^[a-zA-Z]+$/;
     return pattern.test(letterString)
 };
@@ -221,9 +221,17 @@ export const isEnglishLetter = (letterString) => {
 /**
  * 是否为纯中文
  * */
-export const isChineseCharacter = (characterString) => {
+export const isChineseCharacter = characterString => {
     let pattern = /^[\u4E00-\u9FA5]{1,6}$/;
     return pattern.test(characterString)
+};
+
+/**
+ * 验证价格格式
+ * */
+export const isPrice = value => {
+    let pattern = /^\d*\.\d{1,2}|[1-9]*$/;
+    return pattern.test(value)
 };
 
 /**
