@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --open",
-    "build": "vue-cli-service build",
+    "serve": "vue-cli-service serve --mode server --open",
+    "build": "vue-cli-service build --mode server",
     "lint": "vue-cli-service lint",
     "openserver": "node ./server/server.js --open"
   },
@@ -22,9 +22,12 @@
     "koa-router": "^7.4.0",
     "koa-session": "^5.10.1",
     "koa-static": "^5.0.0",
-    "vue": "^2.6.6",
+    "vue": "^2.6.10",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.1"
+    "vue-server-renderer": "^2.6.10",
+    "vuex": "^3.0.1",
+    "vuex-router-sync": "^5.0.0",
+    "webpack-node-externals": "^1.7.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.0",

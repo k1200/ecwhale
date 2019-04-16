@@ -38,10 +38,6 @@ app.use(khelmet());
 app.use(kbodyparser());
 app.use(klogger());
 
-app.use(router);
-
-app.use(async ctx => {
-    ctx.body = 'Hello World';
-});
+router(app);
 
 http.createServer(app.callback()).listen(3000);

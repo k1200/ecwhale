@@ -130,6 +130,7 @@
         name: 'basicAttr',
         data() {
             let regPrice = (rule, value, callback) => {
+                console.log(isPrice(value));
                 if (!isPrice(value)) {
                     callback(new Error('价格格式错误'));
                 } else {
