@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --mode server --open",
-    "build": "vue-cli-service build --mode server",
+    "serve": "vue-cli-service serve --open",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "openserver": "node ./server/server.js --open"
+    "build:client": "npm run bulid",
+    "build:server": "cross-env WEBPACK_TARGET=node vue-cli-service build",
+    "build:win": "npm run build:server && move dist\\vue-ssr-server-bundle.json bundle && npm run build:client && move bundle dist\\vue-ssr-server-bundle.json && cross-env WEBPACK_TARGET=node NODE_ENV=production node ./server/index.js",
+    "start": "cross-env NODE_ENV=production node ./server/index.js",
+    "dev:serve": "cross-env WEBPACK_TARGET=node node ./server/index.js",
+    "dev": "concurrently \"npm run serve\" \"npm run dev:serve\" "
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -20,6 +25,7 @@
     "koa-jwt": "^3.5.1",
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
+    "koa-send": "^5.0.0",
     "koa-session": "^5.10.1",
     "koa-static": "^5.0.0",
     "vue": "^2.6.10",
@@ -33,9 +39,13 @@
     "@vue/cli-plugin-babel": "^3.5.0",
     "@vue/cli-plugin-eslint": "^3.5.0",
     "@vue/cli-service": "^3.5.0",
-    "babel-eslint": "^10.0.1",
+    "@vue/eslint-config-standard": "^3.0.3",
+    "concurrently": "^4.1.0",
+    "cross-env": "^5.2.0",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
+    "lodash.merge": "^4.6.1",
+    "memory-fs": "^0.4.1",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.5.21"

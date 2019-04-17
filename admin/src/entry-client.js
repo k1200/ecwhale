@@ -1,7 +1,7 @@
-// import Vue from 'vue'
+import Vue from 'vue'
 import { createApp } from './app'
 
-// Vue.mixin({
+Vue.mixin({
 //     /* 匹配要渲染的视图后，再获取数据 */
 //     beforeMount () {
 //         const { asyncData } = this.$options
@@ -15,19 +15,19 @@ import { createApp } from './app'
 //             })
 //         }
 //     },
-//     /* 在路由导航之前解析数据 */
-//     beforeRouteUpdate (to, from, next) {
-//         const { asyncData } = this.$options
-//         if (asyncData) {
-//             asyncData({
-//                 store: this.$store,
-//                 route: to
-//             }).then(next).catch(next)
-//         } else {
-//             next()
-//         }
-//     }
-// });
+    /* 在路由导航之前解析数据 */
+    beforeRouteUpdate (to, from, next) {
+        const { asyncData } = this.$options
+        if (asyncData) {
+            asyncData({
+                store: this.$store,
+                route: to
+            }).then(next).catch(next)
+        } else {
+            next()
+        }
+    }
+});
 
 // 客户端特定引导逻辑……
 

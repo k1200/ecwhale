@@ -23,7 +23,7 @@ let config = {
 if (process.env.NODE_ENV === 'server') {
     config = {
         // 将 entry 指向应用程序的 server entry 文件
-        entry: '/src/entry-server.js',
+        entry: '/src/entry-api.js',
 
         // 这允许 webpack 以 Node 适用方式(Node-appropriate fashion)处理动态导入(dynamic import)，
         // 并且还会在编译 Vue 组件时，
