@@ -13,8 +13,7 @@ const path = require('path');
 const resolve = file => path.resolve(__dirname, file);
 const app = new Koa();
 
-const isDev = process.env.NODE_ENV !== 'production';
-const router = isDev ? require('./ssr.dev') : require('./ssr');
+const router = process.env.NODE_ENV !== 'production' ? require('./ssr.dev') : require('./ssr');
 
 app.keys = ['some secret hurr'];
 const CONFIG = {
@@ -39,9 +38,6 @@ app.use(kbodyparser());
 app.use(klogger());
 
 app.use(router.routes()).use(router.allowedMethods());
-// 开放目录
-app.use(koaStatic(resolve("../dist")));
-app.use(koaStatic(resolve("../public")));
 
 const port = process.env.PORT || 3000;
 

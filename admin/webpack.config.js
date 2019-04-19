@@ -1,29 +1,12 @@
-const webpack = require('webpack');
 const VueSSRServerPlugin = require('vue-server-renderer/server-plugin');
 const nodeExternals = require('webpack-node-externals');
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin');
 
-let config = {
-    entry: './src/entry-client.js',
-    // 重要信息：这将 webpack 运行时分离到一个引导 chunk 中，
-    // 以便可以在之后正确注入异步 chunk。
-    // 这也为你的 应用程序/vendor 代码提供了更好的缓存。
-    optimization: {
-        splitChunks: {
-            name: "manifest",
-            minChunks: Infinity
-        }
-    },
-    plugins: [
-        // 此插件在输出目录中
-        // 生成 `vue-ssr-client-manifest.json`。
-        new VueSSRClientPlugin()
-    ]
-};
-if (process.env.NODE_ENV === 'server') {
-    config = {
+let webpackConfig;
+if (process.env.RUN_TARGET === "node") {
+    webpackConfig = {
         // 将 entry 指向应用程序的 server entry 文件
-        entry: '/src/entry-api.js',
+        entry: './src/entry-server.js',
 
         // 这允许 webpack 以 Node 适用方式(Node-appropriate fashion)处理动态导入(dynamic import)，
         // 并且还会在编译 Vue 组件时，
@@ -56,6 +39,24 @@ if (process.env.NODE_ENV === 'server') {
             new VueSSRServerPlugin()
         ]
     }
+} else {
+    webpackConfig = {
+        entry: './src/entry-client.js',
+        // 重要信息：这将 webpack 运行时分离到一个引导 chunk 中，
+        // 以便可以在之后正确注入异步 chunk。
+        // 这也为你的 应用程序/vendor 代码提供了更好的缓存。
+        optimization: {
+            splitChunks: {
+                name: "manifest",
+                minChunks: Infinity
+            }
+        },
+        plugins: [
+            // 此插件在输出目录中
+            // 生成 `vue-ssr-client-manifest.json`。
+            new VueSSRClientPlugin()
+        ]
+    }
 }
 
-module.exports = config;
+module.exports = webpackConfig;
