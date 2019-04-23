@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const Router = require('koa-router');
 const MemoryFS = require('memory-fs');
+const send = require('koa-send');
 const axios = require('axios');
 
 // 1、webpack配置文件
@@ -38,7 +39,13 @@ const handleRequest = async ctx => {
     }
 
     const url = ctx.path;
-    if (url.includes('favicon.ico')){
+    // if (/\w+.[js|css|jpg|jpeg|png|gif|map]/.test(url)) {
+    //     console.log(`proxy ${url}--43`);
+    //     // let res_file = await axios.get(`http://localhost:8080${url}`);
+    //     // return ctx.body = res_file.data;
+    //     return await send(ctx, url, { root: path.resolve(__dirname, '../public') });
+    // }
+    if (url.includes('favicon.ico') || url.includes('ueditor')){
         console.log(`proxy ${url}`);
         return await send(ctx, url, { root: path.resolve(__dirname, '../public') });
     }
@@ -49,7 +56,10 @@ const handleRequest = async ctx => {
     const renderer = createBundleRenderer(bundle, {
         runInNewContext: false,
         template: fs.readFileSync(path.resolve(__dirname, "../src/index.temp.html"), "utf-8"),
-        clientManifest: clientManifest
+        clientManifest: clientManifest,
+        shouldPrefetch () {
+            return false
+        }
     });
     const html = await renderToString(ctx, renderer);
     ctx.body = html;

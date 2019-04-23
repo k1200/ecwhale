@@ -7,7 +7,7 @@ Vue.use(Router);
 export const createRouter = () => {
     return new Router({
         mode: 'history',
-        base: process.env.BASE_URL,
+        // base: process.env.BASE_URL,
         routes: [
             {
                 path: '/',
@@ -20,7 +20,6 @@ export const createRouter = () => {
             },
             {
                 path: '/addGoods',
-                name: 'addGoods',
                 // route level code-splitting
                 // this generates a separate chunk (about.[hash].js) for this route
                 // which is lazy-loaded when the route is visited.

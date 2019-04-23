@@ -33,6 +33,7 @@ Vue.mixin({
 
 const { app, router, store } = createApp();
 
+// 将服务端渲染时候的状态写入vuex中
 if (window.__INITIAL_STATE__) {
     store.replaceState(window.__INITIAL_STATE__)
 }
