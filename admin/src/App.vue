@@ -3,16 +3,9 @@
         <el-container>
             <el-header> <pageHeader/> </el-header>
             <el-container>
-                <el-aside width="208px"><pageAside/></el-aside>
+                <el-aside :width="asideWidth"><pageAside :collapse="collapse"/></el-aside>
                 <el-container>
-                    <el-header style="height: 38px;border-bottom:1px solid #eee;">
-                        <el-breadcrumb style="line-height: 38px;" separator-class="el-icon-arrow-right">
-                            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                            <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-                            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-                            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
-                        </el-breadcrumb>
-                    </el-header>
+                    <el-header style="height: 38px;border-bottom:1px solid #eee;"> <headerBreadcrumb @updateCollapse="updateCollapse"/> </el-header>
                     <el-main><router-view/></el-main>
                     <el-footer> <pageFooter/> </el-footer>
                 </el-container>
@@ -24,11 +17,29 @@
     import pageHeader from "./components/header";
     import pageAside from "./components/aside";
     import pageFooter from "./components/footer";
+    import headerBreadcrumb from "./components/breadcrumb";
     export default {
+        data () {
+          return {
+              collapse: false,
+              asideWidth: '208px'
+          }
+        },
         components: {
             pageHeader,
             pageAside,
-            pageFooter
+            pageFooter,
+            headerBreadcrumb
+        },
+        methods: {
+            updateCollapse () {
+                this.collapse = !this.collapse;
+                if (this.collapse) {
+                    this.asideWidth = ''
+                } else {
+                    this.asideWidth = '208px'
+                }
+            }
         }
     }
 </script>

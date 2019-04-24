@@ -5,9 +5,6 @@
 </template>
 
 <script>
-    import "../../public/ueditor/ueditor.config";
-    import "../../public/ueditor/ueditor.all";
-    import "../../public/ueditor/lang/zh-cn/zh-cn"
     export default {
         name: "ueditor",
         data () {
@@ -21,6 +18,9 @@
           }
         },
         mounted () {
+            require('../../public/ueditor/ueditor.config');
+            require('../../public/ueditor/ueditor.all');
+            require('../../public/ueditor/lang/zh-cn/zh-cn');
             this.createUE();
         },
         methods: {
