@@ -1,30 +1,37 @@
 <template>
     <el-breadcrumb id="breadcrumb" style="line-height: 38px;" separator-class="el-icon-arrow-right">
         <span class="el-icon-menu" @click="$emit('updateCollapse')"></span>
-        <el-breadcrumb-item v-for="item in menu" :key="item.path"> {{ item.path }} </el-breadcrumb-item>
+        <el-breadcrumb-item v-for="item in menu" :key="item.path"> {{ item.label }} </el-breadcrumb-item>
     </el-breadcrumb>
 </template>
 
 <script>
-    import { mapState } from 'vuex';
     export default {
         name: 'breadcrumb',
         data() {
             return {
-
+                menu: []
             }
         },
+        created () {
+            this.updateMenu(this.$route);
+        },
         computed: {
-            ...mapState([
-                'menu'
-            ])
+
         },
         methods: {
-
+            updateMenu (router) {
+                let matched = router.matched;
+                let menu = [];
+                for (let item of matched) {
+                    menu.push({label: item.meta.title, path: item.path});
+                }
+                this.menu = menu;
+            }
         },
         watch: {
-            '$route' (newVal, oldVal) {
-
+            '$route' (newVal) {
+                this.updateMenu(newVal)
             }
         }
     };

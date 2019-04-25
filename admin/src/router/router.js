@@ -11,32 +11,33 @@ export const createRouter = () => {
         routes: [
             {
                 path: '/',
-                component: Home
+                component: Home,
+                meta: { title: '首页' },
             },
             {
                 path: '/home',
                 name: 'home',
-                component: Home
+                component: Home,
+                meta: { title: '首页' },
             },
             {
                 path: '/addGoods',
+                meta: { title: '商品管理' },
                 // route level code-splitting
                 // this generates a separate chunk (about.[hash].js) for this route
                 // which is lazy-loaded when the route is visited.
                 component: () => import(/* webpackChunkName: "about" */ '../views/goodsManage/addGoods.vue'),
                 children: [
                     {
-                        path: '/',
-                        redirect: 'basic'
-                    },
-                    {
-                        path: 'basic',
+                        path: '',
                         name: 'basic',
+                        meta: { title: '添加商品' },
                         component: () => import(/* webpackChunkName: "goodsBasic" */ '../views/goodsManage/children/basicAttr.vue')
                     },
                     {
                         path: 'special',
                         name: 'special',
+                        meta: { parent: '/addGoods', title: '添加商品' },
                         component: () => import(/* webpackChunkName: "goodsSpecial" */ '../views/goodsManage/children/specialAttr.vue')
                     }
                 ]

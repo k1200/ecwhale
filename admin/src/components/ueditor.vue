@@ -1,6 +1,6 @@
 <template>
     <div class="uedito">
-        <div id="editor" type="text/plain" :style="size"></div>
+        <div id="editor" type="text/plain" :style="size" name="details"></div>
     </div>
 </template>
 
@@ -25,8 +25,12 @@
         },
         methods: {
             createUE () {
+                let $this = this;
                 this.UE = window.UE.getEditor('editor', this.UEConfig);
-                this.content && this.UE.setContent(this.content);
+                this.UE.ready(function() {
+                    $this.content && $this.UE.setContent($this.content);
+                    $this.$emit('getUeditor', $this.UE);
+                });
             }
         },
         props: {

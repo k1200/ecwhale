@@ -35,8 +35,8 @@
         <el-form-item label="商品VIP价：" prop="vipPrice">
             <el-input v-model="goodsDetails.vipPrice" placeholder="请输入商品VIP价"></el-input>
         </el-form-item>
-        <el-form-item label="限购数量：" >
-            <el-input type="number" v-model="goodsDetails.limit" placeholder="请输入商品限购数量"></el-input>
+        <el-form-item label="限购数量：" prop="limit">
+            <el-input type="text" v-model="goodsDetails.limit" placeholder="请输入商品限购数量"></el-input>
         </el-form-item>
 
         <el-form-item label="商品列表图：" prop="listImages">
@@ -111,11 +111,11 @@
         </el-form-item>
 
         <el-form-item label="商品详情：" prop="details">
-            <UEditor style="line-height: initial"></UEditor>
+            <UEditor style="line-height: initial" @getUeditor="getUeditor" :content="goodsDetails.details"></UEditor>
         </el-form-item>
 
         <el-form-item>
-            <el-button type="primary" @click="$router.push('special')">添加特殊属性</el-button>
+            <el-button type="primary" @click="$router.push('addGoods/special')">添加特殊属性</el-button>
             <el-button type="primary" @click="submitForm('goodsDetails')">立即创建</el-button>
             <el-button @click="resetForm('goodsDetails')">重置</el-button>
         </el-form-item>
@@ -124,13 +124,12 @@
 
 <script>
     import UEditor from "../../../components/ueditor";
-    import { isPrice } from "../../../config/utils";
-
+    import { isPrice, getStore } from "../../../config/utils";
+    import { mapState, mapMutations } from "vuex";
     export default {
         name: 'basicAttr',
         data() {
             let regPrice = (rule, value, callback) => {
-                console.log(isPrice(value));
                 if (!isPrice(value)) {
                     callback(new Error('价格格式错误'));
                 } else {
@@ -159,6 +158,9 @@
                     { required: true, message: '请输入商品VIP价', trigger: 'blur' },
                     { validator: regPrice, trigger: 'blur' }
                 ],
+                limit: [
+                    { pattern: /^([1-9]\d*)$|^0$/, message: '限购数量必须为整数', trigger: 'blur' }
+                ],
                 listImages: [
                     { required: true, message: '请上传列表图片', trigger: 'blur' },
                 ],
@@ -184,7 +186,7 @@
                     listImages: '',
                     bannerList_pc: '',
                     bannerList_wap: '',
-                    limit: '',
+                    limit: '0',
                     remark: '',
                     details: ''
                 },
@@ -193,13 +195,26 @@
                 dialogVisible: false,
                 fileList_pc: [],
                 fileList_wap: [],
+                UE: null
             };
         },
         components:{
             UEditor
         },
+        computed: {
+            ...mapState([
+                'cacheForm'
+            ])
+        },
+        created () {
+            this.goodsDetails = this.cacheForm || this.goodsDetails;
+        },
         methods: {
+            ...mapMutations([
+               'cacheFormData'
+            ]),
             submitForm(formName) {
+                this.goodsDetails.details = this.UE.getContent();
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         alert('submit!');
@@ -286,6 +301,9 @@
             addBrand () {
 
             },
+            getUeditor (ue) {
+                this.UE = ue;
+            },
 
             submitUpload(screen) {
                 this.$refs[`upload_${screen}`].submit();
@@ -293,9 +311,14 @@
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
+        },
+        beforeDestroy () {
+            this.goodsDetails.details = this.UE.getContent();
+            this.cacheFormData({ data: this.goodsDetails });
         }
     };
 </script>
+
 
 <style lang="scss">
     .upload-demo {

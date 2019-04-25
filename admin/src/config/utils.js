@@ -1,27 +1,28 @@
 /**
- * 存储localStorage
+ * 存储storage
  **/
-export const setStore = (name, content) => {
+export const setStore = (name, content, type = 'session') => {
     if (!name) return;
     if (typeof content !== 'string') {
         content = JSON.stringify(content);
     }
-    window.localStorage.setItem(name, content);
+    type === 'session' ? window.sessionStorage.setItem(name, content) : window.localStorage.setItem(name, content);
 };
 
 /**
- * 获取localStorage
+ * 获取storage
  **/
 export const getStore = name => {
     if (!name) return;
-    return window.localStorage.getItem(name);
+    return window.sessionStorage.getItem(name) || window.localStorage.getItem(name);
 };
 
 /**
- * 删除localStorage
+ * 删除storage
  **/
 export const removeStore = name => {
     if (!name) return;
+    window.sessionStorage.removeItem(name);
     window.localStorage.removeItem(name);
 };
 
@@ -230,7 +231,7 @@ export const isChineseCharacter = characterString => {
  * 验证价格格式
  * */
 export const isPrice = value => {
-    let pattern = /^\d*\.\d{1,2}|[1-9]*$/;
+    let pattern = /^\d+\.\d{1,2}$|^[1-9]+$/;
     return pattern.test(value)
 };
 

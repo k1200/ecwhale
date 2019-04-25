@@ -12,7 +12,7 @@ Vue.use(Vuex);
 export const createStore = () => {
     return new Vuex.Store({
         state: {
-            menu: [{ path: '1', icon: '', name: '系统首页' }]
+            cacheForm: null
         },
         actions,
         mutations
