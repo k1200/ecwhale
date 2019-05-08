@@ -21,14 +21,14 @@
         <el-col :span="6">
             <div class="right-content">
                 <span> {{ greetings }}{{ admin.user.username }} </span>
-                <el-dropdown>
+                <el-dropdown @command="handleCommand">
                     <span class="el-dropdown-link">
                         设置<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item>修改密码</el-dropdown-item>
                         <el-dropdown-item>个人信息</el-dropdown-item>
-                        <el-dropdown-item divided>退出</el-dropdown-item>
+                        <el-dropdown-item divided command="logout">退出</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
@@ -91,6 +91,16 @@
                 if (minHeight < time) {
                     this.notifications = [this.notifications[0], this.notifications[0]];
                     this.animation = { animation: `notification ${time / 20}s linear infinite` }
+                }
+            },
+            handleCommand (command) {
+                switch (command) {
+                    case 'logout':
+                        this.$router.push('/login');
+                        break;
+                    default:
+                        console.log(command);
+                        break;
                 }
             }
         }

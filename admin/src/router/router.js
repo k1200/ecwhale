@@ -10,7 +10,7 @@ export const createRouter = () => {
         // base: process.env.BASE_URL,
         routes: [
             {
-                path: '/',
+                path: '',
                 component: Home,
                 meta: { title: '首页' },
             },
@@ -41,6 +41,18 @@ export const createRouter = () => {
                         component: () => import(/* webpackChunkName: "goodsSpecial" */ '../views/goodsManage/children/specialAttr.vue')
                     }
                 ]
+            },
+            {
+                path: '/goodsList',
+                name: 'goodsList',
+                meta: { title: '商品列表' },
+                component: () => import(/* webpackChunkName: "goodsList" */ '../views/goodsManage/goodsList.vue')
+            },
+            {
+                path: '/login',
+                name: 'login',
+                meta: { title: '登录' },
+                component: () => import(/* webpackChunkName: "login" */ '../views/loginInfo/login.vue')
             }
         ]
     })

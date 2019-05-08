@@ -53,7 +53,7 @@
                         label: {path: 'goodsManage', icon: 'el-icon-tickets', name: '商品管理'},
                         children: [
                             {label: {path: '/addGoods', icon: 'el-icon-document', name: '添加商品'}},
-                            {label: {path: '2-2', icon: 'el-icon-document', name: '商品列表'}},
+                            {label: {path: '/goodsList', icon: 'el-icon-document', name: '商品列表'}},
                             {label: {path: '2-3', icon: 'el-icon-document', name: '添加活动'}},
                             {label: {path: '2-4', icon: 'el-icon-document', name: '活动商品'}},
                             {label: {path: '2-5', icon: 'el-icon-document', name: '优惠券'}},
